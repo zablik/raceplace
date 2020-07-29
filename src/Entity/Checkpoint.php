@@ -24,7 +24,7 @@ class Checkpoint
     private $race;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="float", nullable=true)
      */
     private $distance;
 

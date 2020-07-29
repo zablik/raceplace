@@ -20,7 +20,7 @@ class ProfileResult
     private $id;
 
     /**
-     * @ORM\Column(type="time")
+     * @ORM\Column(type="time", nullable=true)
      */
     private $time;
 
@@ -53,6 +53,11 @@ class ProfileResult
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $numberPlate;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $note;
 
     public function __construct()
     {
@@ -163,6 +168,18 @@ class ProfileResult
     public function setNumberPlate(?string $numberPlate): self
     {
         $this->numberPlate = $numberPlate;
+
+        return $this;
+    }
+
+    public function getNote(): ?string
+    {
+        return $this->note;
+    }
+
+    public function setNote(?string $note): self
+    {
+        $this->note = $note;
 
         return $this;
     }

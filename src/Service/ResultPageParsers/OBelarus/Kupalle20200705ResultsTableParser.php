@@ -26,8 +26,8 @@ class Kupalle20200705ResultsTableParser extends ResultsTableParser
             '/(%s|%s)\s(\d{1,3})\sкм\s\-\s(%s|%s)/',
             Kupalle20200705DataProvider::RACE_TYPE_TITLE__TRAIL,
             Kupalle20200705DataProvider::RACE_TYPE_TITLE__NIGHT_TRAIL,
-            Kupalle20200705DataProvider::GENDER__MALE,
-            Kupalle20200705DataProvider::GENDER__FEMALE
+            Kupalle20200705DataProvider::GROUP__MALE,
+            Kupalle20200705DataProvider::GROUP__FEMALE
         );
 
         $params = null;
@@ -50,8 +50,8 @@ class Kupalle20200705ResultsTableParser extends ResultsTableParser
             Kupalle20200705DataProvider::RACE_TYPE_TITLE__NIGHT_MARATHON,
             Kupalle20200705DataProvider::RACE_TYPE_TITLE__BIKE_MARATHON,
             Kupalle20200705DataProvider::RACE_TYPE_TITLE__NIGHT_BIKE_MARATHON,
-            Kupalle20200705DataProvider::GENDER__MALE,
-            Kupalle20200705DataProvider::GENDER__FEMALE
+            Kupalle20200705DataProvider::GROUP__MALE,
+            Kupalle20200705DataProvider::GROUP__FEMALE
         );
 
         $params = null;

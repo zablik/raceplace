@@ -12,5 +12,5 @@ class ResultsTableRow
     public ?int $time;
     public ?int $place;
     public string $note;
-    public bool $disqualification;
+    public bool $disqualification = false;
 }

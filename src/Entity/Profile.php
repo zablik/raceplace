@@ -6,12 +6,22 @@ use App\Repository\ProfileRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=ProfileRepository::class)
+ * @UniqueEntity(
+ *     fields={"name", "birthday"},
+ *     errorPath="port",
+ *     message="This port is already in use on that host."
+ * )
  */
 class Profile
 {
+    const GROUP__FEMALE = 'female';
+    const GROUP__MALE = 'male';
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -40,9 +50,13 @@ class Profile
     private $club;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(name ="`group`", type="string", length=255, nullable=true)
+     * @Assert\Choice({
+     *     Profile::GROUP__FEMALE,
+     *     Profile::GROUP__MALE,
+     * })
      */
-    private $gender;
+    private $group;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -55,6 +69,7 @@ class Profile
     private $user;
 
     /**
+     * @var ProfileResult[]|ArrayCollection
      * @ORM\OneToMany(targetEntity=ProfileResult::class, mappedBy="profile")
      */
     private $results;
@@ -117,14 +132,14 @@ class Profile
         return $this;
     }
 
-    public function getGender(): ?string
+    public function getGroup(): ?string
     {
-        return $this->gender;
+        return $this->group;
     }
 
-    public function setGender(?string $gender): self
+    public function setGroup(?string $group): self
     {
-        $this->gender = $gender;
+        $this->group = $group;
 
         return $this;
     }

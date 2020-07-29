@@ -6,12 +6,20 @@ use App\Repository\RaceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=RaceRepository::class)
  */
 class Race
 {
+    const TYPE__TRAIL = 'trail';
+    const TYPE__NIGHT_TRAIL = 'night-trail';
+    const TYPE__MARATHON = 'marathon';
+    const TYPE__NIGHT_MARATHON = 'night-marathon';
+    const TYPE__XCM = 'xcm';
+    const TYPE__NIGHT_XCM = 'night_xcm';
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -21,16 +29,24 @@ class Race
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Choice({
+     *     Race::TYPE__TRAIL,
+     *     Race::TYPE__NIGHT_TRAIL,
+     *     Race::TYPE__MARATHON,
+     *     Race::TYPE__NIGHT_MARATHON,
+     *     Race::TYPE__XCM,
+     *     Race::TYPE__NIGHT_XCM
+     * })
      */
     private $type;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $name;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="float", nullable=true)
      */
     private $distance;
 
@@ -46,7 +62,7 @@ class Race
     private $checkpoints;
 
     /**
-     * @ORM\OneToMany(targetEntity=ProfileResult::class, mappedBy="race")
+     * @ORM\OneToMany(targetEntity=ProfileResult::class, mappedBy="race", cascade={"all"}, orphanRemoval=true)
      */
     private $profileResults;
 

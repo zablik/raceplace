@@ -37,11 +37,11 @@ class Event
     /**
      * @ORM\OneToMany(targetEntity=Race::class, mappedBy="event", orphanRemoval=true)
      */
-    private $race;
+    private $races;
 
     public function __construct()
     {
-        $this->race = new ArrayCollection();
+        $this->races = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -88,15 +88,15 @@ class Event
     /**
      * @return Collection|Race[]
      */
-    public function getRace(): Collection
+    public function getRaces(): Collection
     {
-        return $this->race;
+        return $this->races;
     }
 
     public function addRace(Race $race): self
     {
-        if (!$this->race->contains($race)) {
-            $this->race[] = $race;
+        if (!$this->races->contains($race)) {
+            $this->races[] = $race;
             $race->setEvent($this);
         }
 
@@ -105,8 +105,8 @@ class Event
 
     public function removeRace(Race $race): self
     {
-        if ($this->race->contains($race)) {
-            $this->race->removeElement($race);
+        if ($this->races->contains($race)) {
+            $this->races->removeElement($race);
             // set the owning side to null (unless already changed)
             if ($race->getEvent() === $this) {
                 $race->setEvent(null);
