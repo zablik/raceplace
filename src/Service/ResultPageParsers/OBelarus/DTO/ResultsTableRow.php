@@ -8,7 +8,7 @@ class ResultsTableRow
     public ?string $regionClub;
     public ?int $yearBorn;
     public string $numberPlate;
-    public float $distance;
+    public ?float $distance;
     public ?int $time;
     public ?int $place;
     public string $note;

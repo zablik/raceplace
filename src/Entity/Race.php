@@ -57,7 +57,7 @@ class Race
     private $event;
 
     /**
-     * @ORM\OneToMany(targetEntity=Checkpoint::class, mappedBy="race", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Checkpoint::class, mappedBy="race", cascade={"all"}, orphanRemoval=true)
      */
     private $checkpoints;
 
@@ -101,12 +101,12 @@ class Race
         return $this;
     }
 
-    public function getDistance(): ?int
+    public function getDistance(): ?float
     {
         return $this->distance;
     }
 
-    public function setDistance(?int $distance): self
+    public function setDistance(?float $distance): self
     {
         $this->distance = $distance;
 

@@ -2,12 +2,14 @@
 
 namespace App\Service\ResultsManager;
 
+use App\Entity\Checkpoint;
 use App\Entity\Profile;
 use App\Entity\ProfileResult;
 use App\Entity\Race;
 use App\Repository\EventRepository;
 use App\Repository\ProfileRepository;
 use App\Repository\RaceRepository;
+use App\Service\ResultPageParsers\OBelarus\DTO\Checkpoint as CheckpointDTO;
 use App\Service\ResultPageParsers\OBelarus\DTO\Event as EventDTO;
 use App\Service\ResultPageParsers\OBelarus\DTO\ResultsTable;
 use App\Service\ResultPageParsers\OBelarus\DTO\ResultsTableRow;
@@ -43,9 +45,87 @@ class RaceImporter
 
     public function import()
     {
-        $this->importProfiles();
-        $this->importEvents();
+//        $this->importProfiles();
+//        $this->importEvents();
+        //$this->importRaceWithResults();
 
+        //$this->importRaceCheckpoints();
+
+        $this->importProfileCheckpoints();
+
+    }
+
+    private function importProfileCheckpoints()
+    {
+        $events = array_map(
+            fn(EventDTO $eventDTO) => $this->getEventByDTO($eventDTO),
+            $this->loadEvents()
+        );
+
+        $profileCheckpoints = $this->dataProvider->getProfileCheckpoints();
+
+        foreach ($profileCheckpoints as $profileCheckpoint) {
+
+        }
+
+
+
+
+    }
+
+    private function importRaceCheckpoints()
+    {
+        $eventDTOs = $this->dataProvider->getEventRaceCheckpoints();
+
+        foreach ($eventDTOs as $eventDTO) {
+            $event = $this->getEventByDTO($eventDTO);
+            /** @var CheckpointDTO[] $checkpointDTOs */
+            foreach ($eventDTO->checkpoints as $raceTypeName => $checkpointDTOs) {
+                $raceType = ParsedDataConverter::getRaceTypeByTitle($raceTypeName);
+                /** @var Race[] $races */
+                $races = $this->raceRepository->findWithCheckpoints($event, $raceType);
+
+                foreach ($races as $race) {
+                    /** @var Checkpoint[] $checkpoints */
+                    $checkpoints = [];
+                    foreach ($checkpointDTOs as $checkpointDTO) {
+                        if ($checkpointDTO->distance <= $race->getDistance()) {
+                            $checkpoints[] = (new Checkpoint())
+                                ->setRace($race)
+                                ->setMark($checkpointDTO->mark)
+                                ->setDistance($checkpointDTO->distance);
+                        }
+                    }
+
+                    $toDelete = array_udiff(
+                        $race->getCheckpoints()->getValues(),
+                        $checkpoints,
+                        fn (Checkpoint $stored, Checkpoint $provided) => $this->compareCheckpoints($stored, $provided)
+                    );
+
+                    $toAdd = array_udiff(
+                        $checkpoints,
+                        $race->getCheckpoints()->getValues(),
+                        fn (Checkpoint $stored, Checkpoint $provided) => $this->compareCheckpoints($stored, $provided)
+                    );
+
+                    foreach ($toDelete as $toDeleteItem) {
+                        $race->getCheckpoints()->removeElement($toDeleteItem);
+                    }
+
+                    foreach ($toAdd as $toAddItem) {
+                        $race->getCheckpoints()->add($toAddItem);
+                    }
+
+                    $this->em->persist($race);
+                    $this->em->flush();
+                }
+            }
+        }
+    }
+
+    private function importRaceWithResults()
+    {
         foreach ($this->loadEvents() as $eventDTO) {
             $event = $this->getEventByDTO($eventDTO);
 
@@ -54,15 +134,15 @@ class RaceImporter
                 $raceWithResults = $this->raceRepository->findWithResults(
                     $event,
                     $race->getType(),
-                    $race->getDistance(),
-                    ParsedDataConverter::groupMap()[$resultsTable->group]
+                    $race->getDistance()
                 );
 
                 if (!$raceWithResults) {
                     $raceWithResults = $race;
                 }
 
-                $this->updateProfileResults($raceWithResults, $resultsTable);
+                $group = ParsedDataConverter::groupMap()[$resultsTable->group];
+                $this->updateProfileResults($raceWithResults, $resultsTable, $group);
 
                 $raceWithResults->setEvent($event);
 
@@ -70,6 +150,12 @@ class RaceImporter
                 $this->em->flush();
             }
         }
+    }
+
+    private function compareCheckpoints(Checkpoint $stored, Checkpoint $provided)
+    {
+        return $stored->getMark() === $provided->getMark()
+            && $stored->getDistance() === $provided->getDistance();
     }
 
     private function compareRaceResults(ProfileResult $profileResult, ProfileResult $data)
@@ -80,10 +166,13 @@ class RaceImporter
             && $data->getTime() == $profileResult->getTime();
     }
 
-    private function updateProfileResults(Race $raceWithResults, ResultsTable $resultsTable)
+    private function updateProfileResults(Race $raceWithResults, ResultsTable $resultsTable, string $group)
     {
         /** @var ProfileResult[] $profileResults */
-        $profileResults = $raceWithResults->getProfileResults()->getValues();
+        $profileResults = $raceWithResults
+            ->getProfileResults()
+            ->filter(fn(ProfileResult $profileResult) => $profileResult->getProfile()->getGroup() === $group)
+            ->getValues();
 
         // Data from source (i.e. parsed HTML page)
         $profileResultsData = array_map(

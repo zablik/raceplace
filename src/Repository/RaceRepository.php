@@ -43,6 +43,20 @@ class RaceRepository extends ServiceEntityRepository
         return $qb->getQuery()->getOneOrNullResult();
     }
 
+    public function findWithCheckpoints(Event $event, string $type)
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->leftJoin('r.checkpoints', 'c')
+            ->andWhere('r.event = :event')
+            ->andWhere('r.type = :type')
+            ->setParameters([
+                'event' => $event,
+                'type' => $type,
+            ]);
+
+        return $qb->getQuery()->getResult();
+    }
+
     // /**
     //  * @return Race[] Returns an array of Race objects
     //  */

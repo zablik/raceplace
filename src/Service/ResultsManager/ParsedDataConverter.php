@@ -2,11 +2,13 @@
 
 namespace App\Service\ResultsManager;
 
+use App\Entity\Checkpoint;
 use App\Entity\Event;
 use App\Entity\Profile;
 use App\Entity\ProfileResult;
 use App\Entity\Race;
 use App\Service\ResultPageParsers\OBelarus\DataProvider;
+use App\Service\ResultPageParsers\OBelarus\DTO\Checkpoint as CheckpointDTO;
 use App\Service\ResultPageParsers\OBelarus\DTO\Event as EventDTO;
 use App\Service\ResultPageParsers\OBelarus\DTO\ResultsTable;
 use App\Service\ResultPageParsers\OBelarus\DTO\ResultsTableRow;
@@ -73,7 +75,14 @@ class ParsedDataConverter
         return $event;
     }
 
-    private static function getRaceTypeByTitle(string $typeTitle)
+    public static function convertCheckpoint(CheckpointDTO $checkpointDTO)
+    {
+        return (new Checkpoint())
+            ->setDistance($checkpointDTO->distance)
+            ->setMark($checkpointDTO->mark);
+    }
+
+    public static function getRaceTypeByTitle(string $typeTitle)
     {
         foreach (self::raceTypeMap() as $type => $titles) {
             if (in_array($typeTitle, $titles)) {

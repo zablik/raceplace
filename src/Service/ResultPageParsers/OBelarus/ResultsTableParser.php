@@ -2,6 +2,7 @@
 
 namespace App\Service\ResultPageParsers\OBelarus;
 
+use App\Service\Utils\TextUtils;
 use Symfony\Component\DomCrawler\Crawler;
 
 abstract class ResultsTableParser
@@ -80,7 +81,7 @@ abstract class ResultsTableParser
     {
         $results = [];
 
-        $lines = preg_split('/((\r?\n)|(\r\n?))/i', $text);
+        $lines = TextUtils::splitLines($text);
         $lines = array_filter($lines, fn($line) => ResultsTableParser::validateRow($line));
 
         foreach ($lines as $line) {

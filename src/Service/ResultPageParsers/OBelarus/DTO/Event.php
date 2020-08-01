@@ -11,7 +11,10 @@ class Event
     public string $link;
 
     /**
-     * @var ResultsTable[]
+     * @var Race[]
      */
     public array $races = [];
+
+    /** @var array[]  */
+    public array $checkpoints = [];
 }

@@ -35,3 +35,4 @@ services:
 
     App\Service\ResultPageParsers\OBelarus\Kupalle20200705DataProvider:
         $resultsTableParser: '@App\Service\ResultPageParsers\OBelarus\Kupalle20200705ResultsTableParser'
+        $checkpointsParser: '@App\Service\ResultPageParsers\OBelarus\Kupalle20200705CheckpointsParser'
