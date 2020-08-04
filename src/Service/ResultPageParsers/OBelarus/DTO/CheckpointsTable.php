@@ -6,8 +6,8 @@ class CheckpointsTable
 {
     public string $name;
     public string $numberPlate;
-    public string $raceCode;
+    public string $code;
 
-    /** @var ResultsTableRow[] */
-    public array $checkpoints;
+    /** @var CheckpointsTableRow[] */
+    public array $checkpoints = [];
 }

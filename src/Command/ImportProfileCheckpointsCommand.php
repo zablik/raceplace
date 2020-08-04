@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Service\Importer\DataProvider\Profile\ProfileDataProviderHub;
+use App\Service\Importer\ProfileCheckpointsImporter;
 use App\Service\Importer\RaceResultsImporter;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -11,14 +12,14 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class ImportRaceResultsCommand extends Command
+class ImportProfileCheckpointsCommand extends Command
 {
-    protected static $defaultName = 'rp:import:race-results';
+    protected static $defaultName = 'rp:import:profile-checkpoints';
 
-    protected RaceResultsImporter $importer;
+    protected ProfileCheckpointsImporter $importer;
     protected LoggerInterface $logger;
 
-    public function __construct(RaceResultsImporter $importer, LoggerInterface $logger)
+    public function __construct(ProfileCheckpointsImporter $importer, LoggerInterface $logger)
     {
         $this->importer = $importer;
         $this->logger = $logger;
@@ -29,7 +30,7 @@ class ImportRaceResultsCommand extends Command
     protected function configure()
     {
         $this
-            ->setDescription('Imports race results for the particular event')
+            ->setDescription('Imports checkpoints pass times of the races for the particular event')
             ->addArgument('eventSlug', InputArgument::REQUIRED, 'Event slug')
             ->addArgument('source', InputArgument::OPTIONAL, 'Source', ProfileDataProviderHub::OBELARUS)
         ;
@@ -56,7 +57,7 @@ class ImportRaceResultsCommand extends Command
             return 1;
         }
 
-        $io->success('Yoohoo! Race results imported');
+        $io->success('Yoohoo! Race profile checkpoints imported');
 
         return 0;
     }

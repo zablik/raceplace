@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Event;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -17,6 +18,22 @@ class EventRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Event::class);
+    }
+
+    /**
+     * @param string $slug
+     * @return Event|null
+     * @throws NonUniqueResultException
+     */
+    public function findWithRaces(string $slug): ?Event
+    {
+        $qb = $this->createQueryBuilder('e')
+            ->leftJoin('e.races', 'r')
+            ->leftJoin('r.checkpoints', 'c')
+            ->where('e.slug = :eventSlug')
+            ->setParameter('eventSlug', $slug);
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 
     // /**

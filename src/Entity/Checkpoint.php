@@ -50,12 +50,12 @@ class Checkpoint
         return $this;
     }
 
-    public function getDistance(): ?int
+    public function getDistance(): ?float
     {
         return $this->distance;
     }
 
-    public function setDistance(?int $distance): self
+    public function setDistance(?float $distance): self
     {
         $this->distance = $distance;
 
@@ -72,5 +72,15 @@ class Checkpoint
         $this->mark = $mark;
 
         return $this;
+    }
+
+    public function __toString()
+    {
+        return implode(';', [
+            'Mark: ' . $this->getMark(),
+            'Distance: ' . $this->getDistance(),
+            'Race: ' . !empty($this->getRace()) ? $this->getRace()->getSlug() : '',
+            'Event: ' . !empty($this->getRace()->getEvent()) ? $this->getRace()->getEvent()->getSlug() : '',
+        ]);
     }
 }

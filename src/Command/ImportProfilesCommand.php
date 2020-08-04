@@ -3,7 +3,7 @@
 namespace App\Command;
 
 use App\Service\Importer\DataProvider\Profile\ProfileDataProviderHub;
-use App\Service\Importer\RaceResultsImporter;
+use App\Service\Importer\ProfileImporter;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -11,14 +11,14 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class ImportRaceResultsCommand extends Command
+class ImportProfilesCommand extends Command
 {
-    protected static $defaultName = 'rp:import:race-results';
+    protected static $defaultName = 'rp:import:profiles';
 
-    protected RaceResultsImporter $importer;
+    protected ProfileImporter $importer;
     protected LoggerInterface $logger;
 
-    public function __construct(RaceResultsImporter $importer, LoggerInterface $logger)
+    public function __construct(ProfileImporter $importer, LoggerInterface $logger)
     {
         $this->importer = $importer;
         $this->logger = $logger;
@@ -29,7 +29,7 @@ class ImportRaceResultsCommand extends Command
     protected function configure()
     {
         $this
-            ->setDescription('Imports race results for the particular event')
+            ->setDescription('Imports profiles for the particular event')
             ->addArgument('eventSlug', InputArgument::REQUIRED, 'Event slug')
             ->addArgument('source', InputArgument::OPTIONAL, 'Source', ProfileDataProviderHub::OBELARUS)
         ;
@@ -41,7 +41,7 @@ class ImportRaceResultsCommand extends Command
         $eventSlug = $input->getArgument('eventSlug');
         $source = $input->getArgument('source');
 
-        $io->title(sprintf('Importing race results that participated "%s" event from %s source', $eventSlug, $source));
+        $io->title(sprintf('Importing profiles that participated "%s" event from %s source', $eventSlug, $source));
 
         try {
             $this->importer->import($eventSlug, $source);
@@ -56,7 +56,7 @@ class ImportRaceResultsCommand extends Command
             return 1;
         }
 
-        $io->success('Yoohoo! Race results imported');
+        $io->success('Yoohoo! Profiles imported');
 
         return 0;
     }

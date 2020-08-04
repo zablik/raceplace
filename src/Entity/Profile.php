@@ -13,8 +13,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass=ProfileRepository::class)
  * @UniqueEntity(
  *     fields={"name", "birthday"},
- *     errorPath="port",
- *     message="This port is already in use on that host."
+ *     message="Duplicate of name+birthday pair"
+ * )
+ * @ORM\Table(
+ *     indexes={
+ *          @ORM\Index(name="group", columns={"group"}),
+ *          @ORM\Index(name="name", columns={"name"}),
+ *          @ORM\Index(name="birthday", columns={"birthday"})
+ *     }
  * )
  */
 class Profile

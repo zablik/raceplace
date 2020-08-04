@@ -2,8 +2,8 @@
 
 namespace App\Command;
 
-use App\Service\Importer\DataProvider\Profile\ProfileDataProviderHub;
-use App\Service\Importer\RaceResultsImporter;
+use App\Service\Importer\DataProvider\Race\RaceDataProviderHub;
+use App\Service\Importer\RaceImporter;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -11,14 +11,14 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class ImportRaceResultsCommand extends Command
+class ImportRaceCommand extends Command
 {
-    protected static $defaultName = 'rp:import:race-results';
+    protected static $defaultName = 'rp:import:race';
 
-    protected RaceResultsImporter $importer;
+    protected RaceImporter $importer;
     protected LoggerInterface $logger;
 
-    public function __construct(RaceResultsImporter $importer, LoggerInterface $logger)
+    public function __construct(RaceImporter $importer, LoggerInterface $logger)
     {
         $this->importer = $importer;
         $this->logger = $logger;
@@ -29,9 +29,9 @@ class ImportRaceResultsCommand extends Command
     protected function configure()
     {
         $this
-            ->setDescription('Imports race results for the particular event')
+            ->setDescription('Imports Event, Races and Checkpoints')
             ->addArgument('eventSlug', InputArgument::REQUIRED, 'Event slug')
-            ->addArgument('source', InputArgument::OPTIONAL, 'Source', ProfileDataProviderHub::OBELARUS)
+            ->addArgument('source', InputArgument::OPTIONAL, 'Source', RaceDataProviderHub::YAML)
         ;
     }
 
@@ -41,22 +41,17 @@ class ImportRaceResultsCommand extends Command
         $eventSlug = $input->getArgument('eventSlug');
         $source = $input->getArgument('source');
 
-        $io->title(sprintf('Importing race results that participated "%s" event from %s source', $eventSlug, $source));
+        $io->title(sprintf('Import event "%s" with it\'s races and checkpoints from %s source', $eventSlug, $source));
 
         try {
             $this->importer->import($eventSlug, $source);
         } catch (\Exception $e) {
             $io->error('Command failed with an exception message: ' . $e->getMessage());
-            $this->logger->error(sprintf(
-                '%s: %s. Trace: %s',
-                self::$defaultName,
-                $e->getMessage(),
-                $e->getTraceAsString()
-            ));
+            $this->logger->error($e);
             return 1;
         }
 
-        $io->success('Yoohoo! Race results imported');
+        $io->success('Yoohoo! Event imported');
 
         return 0;
     }

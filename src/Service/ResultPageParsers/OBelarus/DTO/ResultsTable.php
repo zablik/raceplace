@@ -4,10 +4,9 @@ namespace App\Service\ResultPageParsers\OBelarus\DTO;
 
 class ResultsTable
 {
-    public string $type;
-    public string $distance;
+    public string $code;
     public string $group;
 
     /** @var ResultsTableRow[] */
-    public array $results;
+    public array $results = [];
 }

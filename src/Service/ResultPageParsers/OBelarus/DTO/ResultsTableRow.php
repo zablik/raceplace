@@ -6,11 +6,10 @@ class ResultsTableRow
 {
     public string $name;
     public ?string $regionClub;
-    public ?int $yearBorn;
+    public ?string $yearBorn;
     public string $numberPlate;
-    public ?float $distance;
-    public ?int $time;
-    public ?int $place;
+    public ?string $distance;
+    public ?string $time;
+    public ?string $place;
     public string $note;
-    public bool $disqualification = false;
 }

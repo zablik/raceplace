@@ -18,8 +18,7 @@ class ProfileCheckpoint
     private $id;
 
     /**
-     * @ORM\OneToOne(targetEntity=Checkpoint::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity=Checkpoint::class, cascade={"persist", "remove"})
      */
     private $checkpoint;
 
@@ -39,7 +38,7 @@ class ProfileCheckpoint
     private $speed;
 
     /**
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="time")
      */
     private $pace;
 
@@ -101,12 +100,12 @@ class ProfileCheckpoint
         return $this;
     }
 
-    public function getPace(): ?float
+    public function getPace(): ?\DateTimeInterface
     {
         return $this->pace;
     }
 
-    public function setPace(float $pace): self
+    public function setPace(\DateTimeInterface $pace): self
     {
         $this->pace = $pace;
 
@@ -123,5 +122,15 @@ class ProfileCheckpoint
         $this->profileResult = $profileResult;
 
         return $this;
+    }
+
+    public function __toString()
+    {
+        return implode('; ', [
+            'ID#' . $this->getId(),
+            'Mark: ' . $this->getCheckpoint()->getMark(),
+            'Time: ' . $this->getTime()->format('H:i:s'),
+            'Total time: ' . $this->getTotalTime()->format('H:i:s'),
+        ]);
     }
 }

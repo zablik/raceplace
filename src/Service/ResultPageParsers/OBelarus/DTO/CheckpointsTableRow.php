@@ -2,12 +2,14 @@
 
 namespace App\Service\ResultPageParsers\OBelarus\DTO;
 
+use \DateTime;
+
 class CheckpointsTableRow
 {
-    public string $checkpointMark;
+    public string $mark = '';
     public ?float $distance;
-    public int $time;
-    public int $totalTime;
+    public ?DateTime $time;
+    public ?DateTime $totalTime;
     public ?float $speed;
-    public ?float $pace;
+    public ?DateTime $pace;
 }

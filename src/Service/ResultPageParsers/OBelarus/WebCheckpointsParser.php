@@ -3,10 +3,14 @@
 namespace App\Service\ResultPageParsers\OBelarus;
 
 use App\Service\ResultPageParsers\Exception\ParseResultsException;
+use App\Service\ResultPageParsers\OBelarus\DTO\CheckpointsTable;
+use App\Service\ResultPageParsers\OBelarus\DTO\CheckpointsTableRow;
+use App\Service\Utils\NumberUtils;
 use App\Service\Utils\TextUtils;
+use App\Service\Utils\TimeUtils;
 use Symfony\Component\DomCrawler\Crawler;
 
-abstract class CheckpointsParser
+class WebCheckpointsParser implements WebDataParserInterface
 {
     const PROFILE = 'profile';
     const NAME = 'name';
@@ -19,18 +23,33 @@ abstract class CheckpointsParser
     const DISTANCE = 'distance';
     const TIME = 'time';
 
-    public function parseCheckpointsPage(string $html)
+    public function parse(string $html): array
     {
         $checkpoints = [];
-        $tables = (new Crawler($html))
+        $textTables = (new Crawler($html))
             ->filterXPath('//div[@id=\'results-body\']/table/tr')
             ->each(fn(Crawler $node, $i) => $node->children('td pre')->html());
 
-        foreach ($tables as $table) {
-            $checkpoints[] = [
-                self::PROFILE => $this->parseProfile($table),
-                self::CHECKPOINTS => $this->parseCheckpoints($table),
-            ];
+        foreach ($textTables as $textTable) {
+            $profileData = $this->parseProfile($textTable);
+            $checkpointsData = $this->parseCheckpoints($textTable);
+
+            $table = new CheckpointsTable();
+            $table->name = $profileData[WebCheckpointsParser::NAME];
+            $table->numberPlate = $profileData[WebCheckpointsParser::NUMBER_PLATE];
+            $table->code = $profileData[WebCheckpointsParser::RACE_CODE];
+
+            foreach ($checkpointsData as $checkpoint) {
+                $tableRow = new CheckpointsTableRow();
+                $tableRow->distance = NumberUtils::strToFloat($checkpoint[WebCheckpointsParser::DISTANCE]);
+                $tableRow->pace = TimeUtils::strTimeToDatetime($checkpoint[WebCheckpointsParser::PACE]);
+                $tableRow->time = TimeUtils::strTimeToDatetime($checkpoint[WebCheckpointsParser::TIME]);
+                $tableRow->totalTime = TimeUtils::strTimeToDatetime($checkpoint[WebCheckpointsParser::TOTAL_TIME]);
+
+                $table->checkpoints[] = $tableRow;
+            }
+
+            $checkpoints[] = $table;
         }
 
         return $checkpoints;
@@ -52,7 +71,11 @@ abstract class CheckpointsParser
                 $profileData[self::RACE_CODE] = $raceCode;
             }
 
-            if ($profileData[self::NAME] && $profileData[self::NUMBER_PLATE] && $profileData[self::RACE_CODE]) {
+            $completed = !empty($profileData[self::NAME])
+                && !empty($profileData[self::NUMBER_PLATE])
+                && !empty($profileData[self::RACE_CODE]);
+
+            if ($completed) {
                 break;
             }
         }
@@ -60,19 +83,19 @@ abstract class CheckpointsParser
         return $profileData;
     }
 
-    protected function parseRaceCode(string $line): string
+    protected function parseRaceCode(string $line): ?string
     {
-        return $this->parseValue('/^Группа:\s+([\w\d:]+)/i', $line);
+        return $this->parseValue('/^Группа:\s+([\w\d:]+)/ui', $line);
     }
 
-    protected function parseNumberPlate(string $line): string
+    protected function parseNumberPlate(string $line): ?string
     {
-        return $this->parseValue('/^№\s+(\d+),/i', $line);
+        return $this->parseValue('/^№\s+(\d+),/ui', $line);
     }
 
-    protected function parseName(string $line): string
+    protected function parseName(string $line): ?string
     {
-        return $this->parseValue('/^<strong>(.*)<\/strong>/i', $line);
+        return $this->parseValue('/^<strong>(.*)<\/strong>/ui', $line);
     }
 
     protected function parseValue(string $pattern, string $string)
@@ -122,5 +145,19 @@ abstract class CheckpointsParser
         }
 
         return $checkpoints;
+    }
+
+    protected function parseCheckpoint(string $line): array
+    {
+        if (!preg_match('/^\s*([\d,]+)\sкм\s+([\d:]+)\s+([\d:]+)\s+([\d:]+)\/км/', $line, $matches)) {
+            throw new ParseResultsException(sprintf('Can\'t parse checkpoint row "%s"', $line));
+        }
+
+        return [
+            self::DISTANCE => $matches[1],
+            self::TOTAL_TIME => $matches[2],
+            self::TIME => $matches[3],
+            self::PACE => $matches[4],
+        ];
     }
 }

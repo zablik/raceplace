@@ -6,9 +6,15 @@ use App\Repository\EventRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=EventRepository::class)
+ * @UniqueEntity("slug")
+ * @ORM\Table(
+ *     indexes={@ORM\Index(name="date", columns={"date"})},
+ *     uniqueConstraints={@ORM\UniqueConstraint(name="slug", columns={"slug"})}
+ * )
  */
 class Event
 {
@@ -35,9 +41,14 @@ class Event
     private $date;
 
     /**
-     * @ORM\OneToMany(targetEntity=Race::class, mappedBy="event", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Race::class, mappedBy="event", cascade={"all"}, orphanRemoval=true)
      */
     private $races;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $slug;
 
     public function __construct()
     {
@@ -112,6 +123,18 @@ class Event
                 $race->setEvent(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
 
         return $this;
     }

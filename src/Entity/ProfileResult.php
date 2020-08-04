@@ -6,9 +6,16 @@ use App\Repository\ProfileResultRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=ProfileResultRepository::class)
+ * @UniqueEntity(fields={"numberPlate", "race"})
+ * @ORM\Table(
+ *     indexes={
+ *          @ORM\Index(name="numberPlate", columns={"number_plate"})
+ *     }
+ * )
  */
 class ProfileResult
 {
@@ -30,7 +37,7 @@ class ProfileResult
     private $race;
 
     /**
-     * @ORM\OneToMany(targetEntity=ProfileCheckpoint::class, mappedBy="profileResult")
+     * @ORM\OneToMany(targetEntity=ProfileCheckpoint::class, mappedBy="profileResult", orphanRemoval=true, cascade={"all"})
      */
     private $checkpoints;
 
@@ -47,7 +54,7 @@ class ProfileResult
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $disqualification;
+    private $disqualification = false;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -74,7 +81,7 @@ class ProfileResult
         return $this->time;
     }
 
-    public function setTime(\DateTimeInterface $time): self
+    public function setTime(?\DateTimeInterface $time): self
     {
         $this->time = $time;
 

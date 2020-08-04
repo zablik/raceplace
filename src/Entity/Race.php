@@ -6,10 +6,20 @@ use App\Repository\RaceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=RaceRepository::class)
+ * @UniqueEntity(fields={"slug", "event"})
+ * @ORM\Table(
+ *     indexes={
+ *          @ORM\Index(name="type", columns={"type"}),
+ *          @ORM\Index(name="race_slug", columns={"slug"}),
+ *          @ORM\Index(name="distance", columns={"distance"})
+ *     },
+ *     uniqueConstraints={@ORM\UniqueConstraint(name="slug", columns={"slug", "event_id"})}
+ * )
  */
 class Race
 {
@@ -18,7 +28,7 @@ class Race
     const TYPE__MARATHON = 'marathon';
     const TYPE__NIGHT_MARATHON = 'night-marathon';
     const TYPE__XCM = 'xcm';
-    const TYPE__NIGHT_XCM = 'night_xcm';
+    const TYPE__NIGHT_XCM = 'night-xcm';
 
     /**
      * @ORM\Id()
@@ -58,6 +68,7 @@ class Race
 
     /**
      * @ORM\OneToMany(targetEntity=Checkpoint::class, mappedBy="race", cascade={"all"}, orphanRemoval=true)
+     * @ORM\OrderBy({"distance" = "ASC"})
      */
     private $checkpoints;
 
@@ -66,10 +77,21 @@ class Race
      */
     private $profileResults;
 
+    /**
+     * @ORM\Embedded(class="RaceResultsSource", columnPrefix="results_source_")
+     */
+    private $resultsSource;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $slug;
+
     public function __construct()
     {
         $this->checkpoints = new ArrayCollection();
         $this->profileResults = new ArrayCollection();
+        $this->resultsSource = new RaceResultsSource();
     }
 
     public function getId(): ?int
@@ -185,5 +207,47 @@ class Race
         }
 
         return $this;
+    }
+
+    /**
+     * @return RaceResultsSource
+     */
+    public function getResultsSource(): ?RaceResultsSource
+    {
+        return $this->resultsSource;
+    }
+
+    /**
+     * @param RaceResultsSource $resultsSource
+     * @return Race
+     */
+    public function setResultsSource($resultsSource): self
+    {
+        $this->resultsSource = $resultsSource;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function __toString()
+    {
+        return implode(';', [
+            'Type: ' . $this->getType(),
+            'Distance: ' . $this->getDistance(),
+            'Slug: ' . $this->getSlug(),
+            'Name: ' . $this->getName(),
+            'Event: ' . !empty($this->getEvent()) ? $this->getEvent()->getName() : '',
+        ]);
     }
 }
