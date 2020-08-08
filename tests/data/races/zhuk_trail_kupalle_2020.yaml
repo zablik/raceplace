@@ -1,0 +1,105 @@
+
+parameters:
+    checkpoints_5:
+        - mark: Круг 1
+          distance: 5.0
+
+    checkpoints_10:
+        - mark: Круг 1
+          distance: 5.0
+        - mark: Круг 2
+          distance: 10.0
+
+    checkpoints_21:
+        - mark: Круг 1
+          distance: 5.0
+        - mark: Круг 2
+          distance: 10.0
+        - mark: Круг 3
+          distance: 15.0
+        - mark: Круг 4
+          distance: 20.0
+
+    results_link: http://www.obelarus.net/results/2020/200705r_zhuk.htm
+    checkpoints_link: http://www.obelarus.net/results/2020/200705s_zhuk.htm
+
+
+
+    zhuk-trail-kupalle-2020:
+        name: "Забег «Жук-трейл # 17 Купалье»"
+        slug: zhuk-trail-kupalle-2020
+        date: 03.07.2020
+        link: https://www.arf.by/?index=events-future&id=2020-zhuktrail-17-kupalle
+        races:
+            -
+                slug: t21
+                type: trail
+                distance: 21.0
+                checkpoints: "%checkpoints_21%"
+                resultsSource:
+                    type: obelarus
+                    link: "%results_link%"
+                    checkpoints_link: "%checkpoints_link%"
+                    codes:
+                        - Т21:Ж
+                        - Т21:М
+            -
+                slug: t21n
+                type: night-trail
+                distance: 21.0
+                checkpoints: "%checkpoints_21%"
+                resultsSource:
+                    type: obelarus
+                    link: "%results_link%"
+                    checkpoints_link: "%checkpoints_link%"
+                    codes:
+                        - Т21:ЖН
+                        - Т21:МН
+            -
+                slug: t10
+                type: trail
+                distance: 10.0
+                checkpoints: "%checkpoints_10%"
+                resultsSource:
+                    type: obelarus
+                    link: "%results_link%"
+                    checkpoints_link: "%checkpoints_link%"
+                    codes:
+                        - Т10:Ж
+                        - Т10:М
+            -
+                slug: t10n
+                type: night-trail
+                distance: 10.0
+                checkpoints: "%checkpoints_10%"
+                resultsSource:
+                    type: obelarus
+                    link: "%results_link%"
+                    checkpoints_link: "%checkpoints_link%"
+                    codes:
+                        - Т10:ЖН
+                        - Т10:МН
+            -
+                slug: t5
+                type: trail
+                distance: 5.0
+                checkpoints: "%checkpoints_5%"
+                resultsSource:
+                    type: obelarus
+                    link: "%results_link%"
+                    checkpoints_link: "%checkpoints_link%"
+                    codes:
+                        - Т5:Ж
+                        - Т5:М
+            -
+                slug: t5n
+                type: night-trail
+                distance: 5.0
+                checkpoints: "%checkpoints_5%"
+                resultsSource:
+                    type: obelarus
+                    link: "%results_link%"
+                    checkpoints_link: "%checkpoints_link%"
+                    codes:
+                        - Т5:ЖН
+                        - Т5:МН

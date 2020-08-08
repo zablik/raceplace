@@ -13,7 +13,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @UniqueEntity("slug")
  * @ORM\Table(
  *     indexes={@ORM\Index(name="date", columns={"date"})},
- *     uniqueConstraints={@ORM\UniqueConstraint(name="slug", columns={"slug"})}
+ *     uniqueConstraints={@ORM\UniqueConstraint(name="event_slug", columns={"slug"})}
  * )
  */
 class Event

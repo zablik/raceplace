@@ -9,6 +9,8 @@ use Doctrine\Migrations\AbstractMigration;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
+ * @todo Move filesystem logic to build deploy commands
+ *
  * Auto-generated Migration: Please modify to your needs!
  */
 final class Version20200721102911 extends AbstractMigration

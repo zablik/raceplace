@@ -1,0 +1,62 @@
+
+parameters:
+
+    checkpoints:
+        - mark: "КП 1. Выход дороги из леса. Крупное дерево слева"
+          distance: 3.0
+        - mark: "КП 2. Перекресток дорог на вершине холма. Руины стальной вышки высотой 6м"
+          distance: 11.6
+        - mark: "КП 3. Примыкание лесной дороги. Дерево на углу справа"
+          distance: 14.4
+        - mark: "КП 4. Пересечение канала и реки. Крупная отдельная ель около канала"
+          distance: 18.2
+        - mark: "КП 5. Начало ливнепровода-акведука. Небольшое v-образное дерево слева"
+          distance: 28.9
+        - mark: "КП 6. Опора ЛЭП #381"
+          distance: 29.4
+        - mark: "КП 7. Выход дороги из леса. Береза слеваа от дороги"
+          distance: 36.3
+        - mark: "КП 8. Угол леса. Береза"
+          distance: 41.0
+        - mark: "Финиш"
+          distance: 44.0
+
+    results_link: http://www.obelarus.net/results/2020/200705r_zhuk.htm
+    checkpoints_link: http://www.obelarus.net/results/2020/200705s_zhuk.htm
+
+    xcm-kupalle-2020:
+        name: "Веломарафон «Купалье»"
+        slug: xcm-kupalle-2020
+        date: 03.07.2020
+        link: https://www.arf.by/?index=events-future&id=2020-kupalle
+        races:
+            -
+                slug: xcm44
+                type: xcm
+                distance: 44.0
+                checkpoints: "%checkpoints%"
+                resultsSource:
+                    type: obelarus
+                    link: "%results_link%"
+                    checkpoints_link: "%checkpoints_link%"
+                    codes:
+                        - Вело:Ж
+                        - Вело:М
+            -
+                slug: xcm44n
+                type: night-xcm
+                distance: 44.0
+                checkpoints: "%checkpoints%"
+                resultsSource:
+                    type: obelarus
+                    link: "%results_link%"
+                    checkpoints_link: "%checkpoints_link%"
+                    codes:
+                        - Вело:ЖН
+                        - Вело:МН
+
+
+
+
+
+

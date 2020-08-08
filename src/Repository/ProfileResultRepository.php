@@ -19,6 +19,27 @@ class ProfileResultRepository extends ServiceEntityRepository
         parent::__construct($registry, ProfileResult::class);
     }
 
+    public function findAllArray()
+    {
+        return $this->createQueryBuilder('pr')
+            ->select([
+                'pr.numberPlate',
+                'pr.id',
+                'pr.time',
+                'pr.place',
+                'pr.numberPlate',
+                'r.id as raceId',
+                'p.id as profileId',
+            ])
+            ->leftJoin('pr.race', 'r')
+            ->leftJoin('pr.profile', 'p')
+            ->leftJoin('pr.checkpoints', 'ch')
+            ->orderBy('pr.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
     // /**
     //  * @return ProfileResult[] Returns an array of ProfileResult objects
     //  */

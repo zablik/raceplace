@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          @ORM\Index(name="race_slug", columns={"slug"}),
  *          @ORM\Index(name="distance", columns={"distance"})
  *     },
- *     uniqueConstraints={@ORM\UniqueConstraint(name="slug", columns={"slug", "event_id"})}
+ *     uniqueConstraints={@ORM\UniqueConstraint(name="race_event_slug", columns={"slug", "event_id"})}
  * )
  */
 class Race
@@ -116,7 +116,7 @@ class Race
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(?string $name): self
     {
         $this->name = $name;
 

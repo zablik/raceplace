@@ -19,6 +19,22 @@ class ProfileCheckpointRepository extends ServiceEntityRepository
         parent::__construct($registry, ProfileCheckpoint::class);
     }
 
+    public function findAllArray()
+    {
+        return $this->createQueryBuilder('pch')
+            ->select([
+                'pch',
+                'pr.id as resId',
+                'ch.id as chId',
+            ])
+            ->leftJoin('pch.profileResult', 'pr')
+            ->leftJoin('pch.checkpoint', 'ch')
+            ->orderBy('pch.id', 'ASC')
+            ->getQuery()
+            ->getArrayResult()
+            ;
+    }
+
     // /**
     //  * @return ProfileCheckpoint[] Returns an array of ProfileCheckpoint objects
     //  */
