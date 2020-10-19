@@ -23,4 +23,5 @@ xdebug.log
 /public/build/
 npm-debug.log
 yarn-error.log
+.yarn
 ###< symfony/webpack-encore-bundle ###
