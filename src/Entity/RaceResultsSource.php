@@ -31,6 +31,11 @@ class RaceResultsSource
     /**
      * @ORM\Column(type="string", length=255)
      */
+    private string $tableConfigType;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
     private ?string $checkpointsLink;
 
     /**
@@ -74,6 +79,22 @@ class RaceResultsSource
         $this->link = $link;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTableConfigType(): ?string
+    {
+        return $this->tableConfigType;
+    }
+
+    /**
+     * @param string $tableConfigType
+     */
+    public function setTableConfigType(?string $tableConfigType): void
+    {
+        $this->tableConfigType = $tableConfigType;
     }
 
     /**

@@ -23,6 +23,7 @@ parameters:
 
     results_link: http://www.obelarus.net/results/2020/200705r_zhuk.htm
     checkpoints_link: http://www.obelarus.net/results/2020/200705s_zhuk.htm
+    table_config_type: no_group
 
     xcm-kupalle-2020:
         name: "Веломарафон «Купалье»"
@@ -38,6 +39,7 @@ parameters:
                 resultsSource:
                     type: obelarus
                     link: "%results_link%"
+                    table_config_type: "%table_config_type%"
                     checkpoints_link: "%checkpoints_link%"
                     codes:
                         - Вело:Ж
@@ -50,6 +52,7 @@ parameters:
                 resultsSource:
                     type: obelarus
                     link: "%results_link%"
+                    table_config_type: "%table_config_type%"
                     checkpoints_link: "%checkpoints_link%"
                     codes:
                         - Вело:ЖН

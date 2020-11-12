@@ -109,7 +109,7 @@ class RaceResultsImporter
 
         $time = $resultsTableRow->time;
         $note = $resultsTableRow->note;
-        if (preg_match('/DSQ/i', $time)) {
+        if (preg_match('/(DSQ|DNF)/i', $time)) {
             $profileResult->setNote($time);
             $profileResult->setDisqualification(true);
             if (preg_match('/(\d?\d:\d\d:\d\d)/', $note, $match)) {

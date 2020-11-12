@@ -30,11 +30,19 @@ class ProfileImporter
     {
         $profileDtos = $this->providerHub->getProvider($source)->getProfilesData($eventSlug);
 
-        foreach ($profileDtos as $profileDto) {
-            $profile = $this->convertProfileDtoToProfile($profileDto);
-            if (!$this->findProfile($profile)) {
-                $this->em->persist($profile);
+        $this->em->beginTransaction();
+
+        try {
+            foreach ($profileDtos as $profileDto) {
+                $profile = $this->convertProfileDtoToProfile($profileDto);
+                if (!$this->findProfile($profile)) {
+                    $this->em->persist($profile);
+                }
             }
+
+            $this->em->commit();
+        } catch (\Exception $e) {
+            $this->em->rollback();
         }
 
         $this->em->flush();

@@ -11,6 +11,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+/**
+ * @example php bin/console rp:import:race xcm-naliboki-2020
+ */
 class ImportRaceCommand extends Command
 {
     protected static $defaultName = 'rp:import:race';

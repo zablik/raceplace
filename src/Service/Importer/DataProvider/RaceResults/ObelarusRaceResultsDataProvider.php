@@ -32,7 +32,7 @@ class ObelarusRaceResultsDataProvider extends WebDataProvider implements RaceRes
      */
     public function getRaceResultsData(Race $race): array
     {
-        $tables = $this->getResults($race->getResultsSource()->getLink());
+        $tables = $this->getResults($race->getResultsSource()->getLink(), $race->getResultsSource()->getTableConfigType());
         /** @var ResultsTable[] $raceTables */
         $raceTables = array_filter(
             $tables,

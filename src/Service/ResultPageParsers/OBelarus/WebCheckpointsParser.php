@@ -23,7 +23,7 @@ class WebCheckpointsParser implements WebDataParserInterface
     const DISTANCE = 'distance';
     const TIME = 'time';
 
-    public function parse(string $html): array
+    public function parse(string $html, string $type): array
     {
         $checkpoints = [];
         $textTables = (new Crawler($html))

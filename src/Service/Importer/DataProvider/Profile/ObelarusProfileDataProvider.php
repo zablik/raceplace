@@ -40,9 +40,7 @@ class ObelarusProfileDataProvider extends WebDataProvider implements ProfileData
 
         $tables = [];
         foreach ($event->getRaces() as $race) {
-            $link = $race->getResultsSource()->getLink();
-
-            $resultTables = $this->getResults($link);
+            $resultTables = $this->getResults($race->getResultsSource()->getLink(), $race->getResultsSource()->getTableConfigType());
 
             // keep only records for the current event
             $resultTables = array_filter(

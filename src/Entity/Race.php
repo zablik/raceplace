@@ -29,6 +29,7 @@ class Race
     const TYPE__NIGHT_MARATHON = 'night-marathon';
     const TYPE__XCM = 'xcm';
     const TYPE__NIGHT_XCM = 'night-xcm';
+    const TYPE__MULTI = 'multi';
 
     /**
      * @ORM\Id()
@@ -45,7 +46,8 @@ class Race
      *     Race::TYPE__MARATHON,
      *     Race::TYPE__NIGHT_MARATHON,
      *     Race::TYPE__XCM,
-     *     Race::TYPE__NIGHT_XCM
+     *     Race::TYPE__NIGHT_XCM,
+     *     Race::TYPE__MULTI,
      * })
      */
     private $type;

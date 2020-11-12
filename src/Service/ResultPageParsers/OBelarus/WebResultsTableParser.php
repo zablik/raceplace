@@ -10,16 +10,6 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class WebResultsTableParser implements WebDataParserInterface
 {
-    const COL_N = 'n';
-    const COL_NAME = 'name';
-    const COL_REGION = 'regionClub';
-    const COL_BORN = 'yearBorn';
-    const COL_NUMBER_PLATE = 'numberPlate';
-    const COL_DISTANCE = 'distance';
-    const COL_TIME = 'time';
-    const COL_PLACE = 'place';
-    const COL_NOTE = 'note';
-
     const RACE_TYPE = 'race-type';
     const RACE_GROUP = 'race-group';
     const RACE_DISTANCE = 'race-distance';
@@ -36,26 +26,12 @@ class WebResultsTableParser implements WebDataParserInterface
         ];
     }
 
-    protected static function tableConfig()
-    {
-        return [
-            self::COL_N => ['from' => 0, 'length' => 5],
-            self::COL_NAME => ['from' => 5, 'length' => 26],
-            self::COL_REGION => ['from' => 31, 'length' => 21],
-            self::COL_BORN => ['from' => 52, 'length' => 4],
-            self::COL_NUMBER_PLATE => ['from' => 58, 'length' => 6],
-            self::COL_DISTANCE => ['from' => 64, 'length' => 11],
-            self::COL_TIME => ['from' => 75, 'length' => 9],
-            self::COL_PLACE => ['from' => 84, 'length' => 4],
-            self::COL_NOTE => ['from' => 88, 'length' => 10],
-        ];
-    }
-
     /**
      * @param string $html
+     * @param string $type
      * @return ResultsTable[]
      */
-    public function parse(string $html): array
+    public function parse(string $html, string $type): array
     {
         $nodes = (new Crawler($html))
             ->filterXPath('//div[@id=\'results-body\']')
@@ -63,15 +39,26 @@ class WebResultsTableParser implements WebDataParserInterface
 
         $results = [];
         $raceCount = $resultsCount = 0;
+        $skipFollowingContent = false;
         foreach ($nodes as $node) {
+            if ($skipFollowingContent) {
+                $skipFollowingContent = false;
+                continue;
+            }
+
             $results[$raceCount] = new ResultsTable();
             if ($node->nodeName === 'h2') {
                 $raceParams = $this->parseRaceParams($node->nodeValue);
+                if (is_null($raceParams)) {
+                    $skipFollowingContent = true;
+                    continue;
+                }
+
                 $results[$raceCount]->code = $raceParams[self::RACE_CODE];
                 $results[$raceCount]->group = $raceParams[self::RACE_GROUP];
                 $raceCount++;
             } elseif ($node->nodeName === 'pre') {
-                $results[$resultsCount++]->results = $this->parseTextTable($node->nodeValue);
+                $results[$resultsCount++]->results = $this->parseTextTable($node->nodeValue, $type);
             }
         }
 
@@ -84,7 +71,8 @@ class WebResultsTableParser implements WebDataParserInterface
     {
         $regex = sprintf('/^([a-zа-яё\d:\-]+)\s-.*-\s(%s)$/iu', implode('|', self::getAvailableGroups()));
         if (!preg_match($regex, $tableTitle, $match)) {
-            throw new ParseResultsException(sprintf('Unable to parse race params from title "%s"', $tableTitle));
+            return null;
+            //throw new ParseResultsException(sprintf('Unable to parse race params from title "%s"', $tableTitle));
         }
 
         // TODO: #parser Provide [race-code => group] in configuration
@@ -94,9 +82,9 @@ class WebResultsTableParser implements WebDataParserInterface
         ];
     }
 
-    protected static function parseRow(string $row): ResultsTableRow
+    protected static function parseRow(string $row, string $type): ResultsTableRow
     {
-        $columnsConfig = self::tableConfig();
+        $columnsConfig = TableConfig::getConfig($type);
 
         $result = new ResultsTableRow();
         foreach ($columnsConfig as $colName => $cnf) {
@@ -112,7 +100,7 @@ class WebResultsTableParser implements WebDataParserInterface
             && !preg_match('/(Фамилия Имя|Дистанция|Результат|Главный судья|Главный секретарь)/i', $line);
     }
 
-    protected function parseTextTable(string $text): array
+    protected function parseTextTable(string $text, string $type): array
     {
         $results = [];
 
@@ -120,7 +108,7 @@ class WebResultsTableParser implements WebDataParserInterface
         $lines = array_filter($lines, fn($line) => WebResultsTableParser::validateRow($line));
 
         foreach ($lines as $line) {
-            $results[] = WebResultsTableParser::parseRow($line);
+            $results[] = WebResultsTableParser::parseRow($line, $type);
         }
 
         return $results;

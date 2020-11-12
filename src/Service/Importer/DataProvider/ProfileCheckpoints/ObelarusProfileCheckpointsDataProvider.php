@@ -33,7 +33,8 @@ class ObelarusProfileCheckpointsDataProvider extends WebDataProvider implements 
     public function getProfileCheckpointsData(Race $race): array
     {
         /** @var CheckpointsTable[] $tables */
-        $tables = $this->getResults($race->getResultsSource()->getCheckpointsLink());
+        // TODO: config type for checkpoints
+        $tables = $this->getResults($race->getResultsSource()->getCheckpointsLink(), $race->getResultsSource()->getTableConfigType());
 
         return array_filter(
             $tables,
