@@ -1,0 +1,40 @@
+{% extends "admin/components/base.html.twig" %}
+
+{% block content %}
+<div class="content-wrapper">
+    <section class="content-header"></section>
+
+    <!-- Main content -->
+    <div class="content">
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">{% if event is defined %}Event #{{ event.id }}{% else %}NEW Event{% endif %}</h3>
+                        </div>
+                        <!-- /.card-header -->
+
+                        <!-- form start -->
+                        <div class="card-body">
+                            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+                            {{ form_widget(form) }}
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                                <a href="{{ url('event_list') }}"
+                                   class="btn btn-outline-secondary float-right">Cancel</a>
+                            </div>
+                            {{ form_end(form) }}
+                        </div>
+
+                    </div>
+                </div>
+                <!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content -->
+    </div>
+    {% endblock %}
+</div>

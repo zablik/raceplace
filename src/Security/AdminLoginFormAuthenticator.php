@@ -41,7 +41,6 @@ class AdminLoginFormAuthenticator extends AbstractFormLoginAuthenticator impleme
 
     public function supports(Request $request)
     {
-//        die('ssss');
         return self::LOGIN_ROUTE === $request->attributes->get('_route')
             && $request->isMethod('POST');
     }

@@ -36,6 +36,15 @@ class EventRepository extends ServiceEntityRepository
         return $qb->getQuery()->getOneOrNullResult();
     }
 
+    public function getAllQueryQB()
+    {
+        $qb = $this->createQueryBuilder('event')
+            ->leftJoin('event.races', 'races')
+            ->orderBy('event.date', 'DESC');
+
+        return $qb;
+    }
+
     // /**
     //  * @return Event[] Returns an array of Event objects
     //  */

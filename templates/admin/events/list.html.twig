@@ -1,0 +1,84 @@
+{% extends "admin/components/base.html.twig" %}
+
+{% block content %}
+    <div class="content-wrapper">
+
+        <section class="content-header">
+{#            <div class="container-fluid">#}
+{#                <div class="row mb-2">#}
+{#                    <div class="col-sm-6">#}
+{#                        <h1>Simple Tables</h1>#}
+{#                    </div>#}
+{#                    <div class="col-sm-6">#}
+{#                        <ol class="breadcrumb float-sm-right">#}
+{#                            <li class="breadcrumb-item"><a href="#">Home</a></li>#}
+{#                            <li class="breadcrumb-item active">Simple Tables</li>#}
+{#                        </ol>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div><!-- /.container-fluid -->#}
+        </section>
+
+
+        <!-- Main content -->
+        <div class="content">
+
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Events: {{ pagination.getTotalItemCount }}</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <table class="table table-bordered">
+                                    <thead>
+                                    <tr>
+                                        <th style="width: 10px">#</th>
+                                        <th>Name</th>
+                                        <th>Date</th>
+                                        <th>Races</th>
+                                        <th style="width: 40px">Link</th>
+                                        <th style="width: 40px"></th>
+                                        <th style="width: 40px"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for event in pagination %}
+                                        <tr>
+                                            <td>{{ event.id }}</td>
+                                            <td>{{ event.name }}</td>
+                                            <td>{{ event.date|date("d.m.Y") }}</td>
+                                            <td><a href="#">{{ event.races|length }} Races</a></td>
+                                            <td><a href="{{ event.link }}">link</a></td>
+                                            <td><a href="{{ path('event_edit', {'id': event.id}) }}">edit</a></td>
+                                            <td><a href=# data-toggle="modal" data-target="#confirm-delete" data-name="{{ event.name }}" data-href="{{ path('event_delete', {'id': event.id}) }}">delete</a></td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- /.card-body -->
+                            <div class="card-footer clearfix">
+                                <ul class="pagination pagination-sm m-0 float-right">
+                                    {{ knp_pagination_render(pagination) }}
+                                </ul>
+                                <a href="{{ url('event_create') }}"
+                                   class="btn btn-info float-right">Create</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% include "admin/components/delete_modal.html.twig" %}
+
+                </div>
+                <!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content -->
+    </div>
+{% endblock %}
+
+
