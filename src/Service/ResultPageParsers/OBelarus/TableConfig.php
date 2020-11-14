@@ -2,6 +2,7 @@
 
 namespace App\Service\ResultPageParsers\OBelarus;
 
+use App\Entity\RaceResultsSource;
 use App\Service\ResultPageParsers\Exception\ParseResultsException;
 
 class TableConfig
@@ -16,26 +17,15 @@ class TableConfig
     const COL_PLACE = 'place';
     const COL_NOTE = 'note';
 
-    const TYPE_GENERAL = 'general';
-    const TYPE_NO_GROUP = 'no_group';
-
-    private static function getTypes()
-    {
-        return [
-            self::TYPE_GENERAL,
-            self::TYPE_NO_GROUP,
-        ];
-    }
-
     public static function getConfig(string $type): array
     {
-        if (!in_array($type, self::getTypes())) {
+        if (!in_array($type, RaceResultsSource::getConfigTypes())) {
             throw new ParseResultsException(sprintf('Unexpected config type "%s"', $type));
         }
 
         $generalConfig = self::generalConfig();
 
-        if ($type === self::TYPE_NO_GROUP) {
+        if ($type === RaceResultsSource::TYPE_NO_GROUP) {
             $generalConfig[self::COL_NOTE] = ['from' => 88, 'length' => 10];
         }
 

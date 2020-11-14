@@ -43,9 +43,13 @@ class ProfileImporter
             $this->em->commit();
         } catch (\Exception $e) {
             $this->em->rollback();
+
+            return false;
         }
 
         $this->em->flush();
+
+        return true;
     }
 
     private static function groupMap()

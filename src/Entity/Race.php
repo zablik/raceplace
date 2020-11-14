@@ -6,6 +6,7 @@ use App\Repository\RaceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -23,6 +24,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Race
 {
+    use TimestampableEntity;
+
     const TYPE__TRAIL = 'trail';
     const TYPE__NIGHT_TRAIL = 'night-trail';
     const TYPE__MARATHON = 'marathon';
@@ -30,6 +33,19 @@ class Race
     const TYPE__XCM = 'xcm';
     const TYPE__NIGHT_XCM = 'night-xcm';
     const TYPE__MULTI = 'multi';
+
+    public static function getTypes()
+    {
+        return [
+            self::TYPE__TRAIL,
+            self::TYPE__NIGHT_TRAIL,
+            self::TYPE__MARATHON,
+            self::TYPE__NIGHT_MARATHON,
+            self::TYPE__XCM,
+            self::TYPE__NIGHT_XCM,
+            self::TYPE__MULTI,
+        ];
+    }
 
     /**
      * @ORM\Id()

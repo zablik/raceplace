@@ -4,12 +4,15 @@ namespace App\Entity;
 
 use App\Repository\ProfileCheckpointRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 /**
  * @ORM\Entity(repositoryClass=ProfileCheckpointRepository::class)
  */
 class ProfileCheckpoint
 {
+    use TimestampableEntity;
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()

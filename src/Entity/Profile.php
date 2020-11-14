@@ -6,6 +6,7 @@ use App\Repository\ProfileRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -25,8 +26,18 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Profile
 {
+    use TimestampableEntity;
+
     const GROUP__FEMALE = 'female';
     const GROUP__MALE = 'male';
+
+    public static function getGroups()
+    {
+        return [
+            self::GROUP__FEMALE,
+            self::GROUP__MALE,
+        ];
+    }
 
     /**
      * @ORM\Id()
@@ -76,7 +87,7 @@ class Profile
 
     /**
      * @var ProfileResult[]|ArrayCollection
-     * @ORM\OneToMany(targetEntity=ProfileResult::class, mappedBy="profile")
+     * @ORM\OneToMany(targetEntity=ProfileResult::class, mappedBy="profile", cascade={"remove"})
      */
     private $results;
 

@@ -1,0 +1,89 @@
+{% extends "admin/components/base.html.twig" %}
+
+{% block content %}
+    <div class="content-wrapper">
+
+        <section class="content-header"></section>
+
+
+        <!-- Main content -->
+        <div class="content">
+
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">{{ race.event.name }} Race [{{ race.slug }}] Results: {{ race.profileResults|length }}</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <table class="table table-bordered table-striped data-grid">
+                                    <thead>
+                                    <tr>
+                                        <th>Profile</th>
+                                        <th>Born</th>
+                                        <th>Place</th>
+                                        <th>Group</th>
+                                        <th>Time</th>
+                                        <th>Number Plate</th>
+                                        <th>Disqualification</th>
+                                        <th>Note</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for results in race.profileResults %}
+                                    <tr>
+                                        <td>{{ results.profile.name }}</td>
+                                        <td>{{ results.profile.birthday ? results.profile.birthday|date("Y"): '' }}</td>
+                                        <td>{{ results.place }}</td>
+                                        <td>{{ results.profile.group }}</td>
+                                        <td>{{ results.time|date("H:i:s") }}</td>
+                                        <td>{{ results.numberPlate }}</td>
+                                        <td>{{ results.disqualification }}</td>
+                                        <td>{{ results.note }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                    <tfoot>
+                                    <tr>
+                                        <th>Profile</th>
+                                        <th>Born</th>
+                                        <th>Place</th>
+                                        <th>Group</th>
+                                        <th>Time</th>
+                                        <th>Number Plate</th>
+                                        <th>Disqualification</th>
+                                        <th>Note</th>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <!-- /.card-body -->
+                            <div class="card-footer clearfix ">
+                                <div class="btn-toolbar">
+                                    {% if race.profileResults|length > 0 %}
+                                        <a href=# data-toggle="modal" data-target="#confirm-delete" data-name="ALL results of {{ race.event.name }} Race: {{ race.slug }}" data-href="{{ url('race_results_delete', {'id': race.id}) }}" class="btn btn-danger">Delete ALL results</a>
+                                    {% else %}
+{#                                        <a href="{{ url('race_profiles_obtain', {'id': race.id}) }}" class="btn btn-info">Import profiles</a>#}
+                                        <a href="{{ url('race_results_obtain', {'id': race.id}) }}" class="btn btn-info">Import results</a>
+                                    {% endif %}
+                                    <a href="{{ url('race_list', {'eventId': race.event.id}) }}"
+                                       class="mx-1 btn btn-info float-right">To Race list</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% include "admin/components/delete_modal.html.twig" %}
+
+                </div>
+                <!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content -->
+    </div>
+{% endblock %}
+
+

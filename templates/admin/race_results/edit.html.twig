@@ -13,7 +13,8 @@
 
                         <div class="card card-primary">
                             <div class="card-header">
-                                <h3 class="card-title">{% if event is defined %}Event #{{ event.id }}{% else %}NEW Event{% endif %}</h3>
+                                <h3 class="card-title">{% if race is defined %}Race #{{ race.id }}{% else %}NEW Race{% endif %}
+                                    of {{ event.name }}</h3>
                             </div>
                             <!-- /.card-header -->
 
@@ -23,8 +24,8 @@
                                 {{ form_widget(form) }}
                                 <div class="card-footer">
                                     <button type="submit" class="btn btn-primary">Submit</button>
-                                    <a href="{{ url('event_list') }}"
-                                       class="btn btn-outline-secondary float-right">Cancel</a>
+                                    <a href="{{ url('race_list', {'eventId': event.id}) }}"
+                                       class="btn btn-outline-secondary float-right">To Race List</a>
                                 </div>
                                 {{ form_end(form) }}
                             </div>

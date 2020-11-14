@@ -1,0 +1,77 @@
+{% extends "admin/components/base.html.twig" %}
+
+{% block content %}
+    <div class="content-wrapper">
+
+        <section class="content-header"></section>
+
+
+        <!-- Main content -->
+        <div class="content">
+
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Event [{{ event.name }}] Races: {{ event.races|length }}</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <table class="table table-bordered">
+                                    <thead>
+                                    <tr>
+                                        <th style="width: 10px">#</th>
+                                        <th>Name</th>
+                                        <th>Type</th>
+                                        <th>Distance</th>
+                                        <th>Slug</th>
+                                        <th>Source Type</th>
+                                        <th>Source</th>
+                                        <th>Results</th>
+                                        <th style="width: 40px"></th>
+                                        <th style="width: 40px"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for race in event.races %}
+                                        <tr>
+                                            <td>{{ race.id }}</td>
+                                            <td>{{ race.name }}</td>
+                                            <td>{{ race.type }}</td>
+                                            <td>{{ race.distance }}</td>
+                                            <td>{{ race.slug }}</td>
+                                            <td>{{ race.resultsSource.type }}</td>
+                                            <td><a href="{{ race.resultsSource.link }}">link</a></td>
+                                            <td><a href="{{ path('race_results', {'id': race.id}) }}">{% if race.profileResults|length > 0 %}{{ race.profileResults|length }}{% else %}not imported{% endif %}</a></td>
+                                            <td><a href="{{ path('race_edit', {'eventId': event.id, 'id': race.id}) }}">edit</a></td>
+                                            <td><a href=# data-toggle="modal" data-target="#confirm-delete" data-name="{{ event.name }} Race: {{ race.slug }}" data-href="{{ path('race_delete', {'eventId': event.id, 'id': race.id}) }}">delete</a></td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- /.card-body -->
+                            <div class="card-footer clearfix ">
+                                <div class="btn-toolbar">
+                                    <a href="{{ url('race_create', {'eventId': event.id}) }}"
+                                       class="btn btn-info float-right">Create</a>
+                                    <a href="{{ url('event_list') }}"
+                                       class="mx-1 btn btn-info float-right">To Events list</a>
+                                </div>
+                            </div>
+                          </div>
+                    </div>
+
+                    {% include "admin/components/delete_modal.html.twig" %}
+
+                </div>
+                <!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content -->
+    </div>
+{% endblock %}
+
+

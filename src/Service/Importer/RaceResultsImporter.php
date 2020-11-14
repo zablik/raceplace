@@ -3,6 +3,7 @@
 namespace App\Service\Importer;
 
 use App\Entity\ProfileResult;
+use App\Entity\Race;
 use App\Repository\EventRepository;
 use App\Repository\ProfileRepository;
 use App\Service\Importer\DataProvider\RaceResults\RaceResultsDataProviderHub;
@@ -35,6 +36,40 @@ class RaceResultsImporter
         $this->profileRepository = $profileRepository;
     }
 
+    public function importRaceResults(Race $race)
+    {
+        $results = $this->providerHub->getProvider($race->getResultsSource()->getType())->getRaceResultsData($race);
+
+        $profileResults = [];
+        foreach ($results as $result) {
+            $profile = $this->findProfile($result);
+
+            if (!$profile) {
+                throw new DataProviderExcepton(
+                    sprintf('No profile for "%s" in DB! Import profiles first', $result->name)
+                );
+            }
+
+            $profileResult = $this->convertToProfileResult($result);
+            $profileResult
+                ->setRace($race)
+                ->setProfile($profile);
+
+            $profileResults[] = $profileResult;
+        }
+
+        CollectionUtils::importCollection(
+            $race,
+            $race->getProfileResults()->getValues(),
+            $profileResults,
+            'ProfileResult',
+            fn(ProfileResult $res1, ProfileResult $res2) => $this->compareProfileResults($res1, $res2)
+        );
+
+        $this->em->persist($race);
+        $this->em->flush();
+    }
+
     public function import(string $eventSlug, string $source)
     {
         $event = $this->eventRepository->findWithRaces($eventSlug);
@@ -44,38 +79,8 @@ class RaceResultsImporter
         }
 
         foreach ($event->getRaces() as $race) {
-            $results = $this->providerHub->getProvider($source)->getRaceResultsData($race);
-
-            $profileResults = [];
-            foreach ($results as $result) {
-                $profile = $this->findProfile($result);
-
-                if (!$profile) {
-                    throw new DataProviderExcepton(
-                        sprintf('No profile for "%s" in DB! Import profiles first', $result->name)
-                    );
-                }
-
-                $profileResult = $this->convertToProfileResult($result);
-                $profileResult
-                    ->setRace($race)
-                    ->setProfile($profile);
-
-                $profileResults[] = $profileResult;
-            }
-
-            CollectionUtils::importCollection(
-                $race,
-                $race->getProfileResults()->getValues(),
-                $profileResults,
-                'ProfileResult',
-                fn(ProfileResult $res1, ProfileResult $res2) => $this->compareProfileResults($res1, $res2)
-            );
-
-            $this->em->persist($race);
+            $this->importRaceResults($race);
         }
-
-        $this->em->flush();
     }
 
     private function compareProfileResults(ProfileResult $res1, ProfileResult $res2)

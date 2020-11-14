@@ -29,7 +29,7 @@
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Events: {{ pagination.getTotalItemCount }}</h3>
+                                <h3 class="card-title">Profiles: {{ pagination.getTotalItemCount }}</h3>
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">
@@ -38,25 +38,31 @@
                                     <tr>
                                         <th style="width: 10px">#</th>
                                         <th>Name</th>
-                                        <th>Date</th>
+                                        <th>Year Born</th>
+                                        <th>Group</th>
+                                        <th>Region</th>
+                                        <th>Club</th>
                                         <th>Races</th>
-                                        <th>Import Profiles</th>
-                                        <th style="width: 40px">Link</th>
+                                        <th>User</th>
+                                        <th>Strava</th>
                                         <th style="width: 40px"></th>
                                         <th style="width: 40px"></th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {% for event in pagination %}
+                                    {% for profile in pagination %}
                                         <tr>
-                                            <td>{{ event.id }}</td>
-                                            <td>{{ event.name }}</td>
-                                            <td>{{ event.date|date("d.m.Y") }}</td>
-                                            <td><a href="{{ url('race_list', {'eventId': event.id}) }}">{{ event.races|length }} Races</a></td>
-                                            <td><a href="{{ url('profile_import', {'eventId': event.id}) }}">Import Profiles</a></td>
-                                            <td><a href="{{ event.link }}">link</a></td>
-                                            <td><a href="{{ path('event_edit', {'id': event.id}) }}">edit</a></td>
-                                            <td><a href=# data-toggle="modal" data-target="#confirm-delete" data-name="{{ event.name }}" data-href="{{ path('event_delete', {'id': event.id}) }}">delete</a></td>
+                                            <td>{{ profile.id }}</td>
+                                            <td>{{ profile.name }}</td>
+                                            <td>{{ profile.birthday|date("Y") }}</td>
+                                            <td>{{ profile.group }}</td>
+                                            <td>{{ profile.region }}</td>
+                                            <td>{{ profile.club }}</td>
+                                            <td>{{ profile.results|length }}</td>
+                                            <td>{% if profile.user is not empty %}{{ profile.user.email }}{% endif %}</td>
+                                            <td>{{ profile.stravaId }}</td>
+                                            <td><a href="{{ path('profile_edit', {'id': profile.id}) }}">edit</a></td>
+                                            <td><a href=# data-toggle="modal" data-target="#confirm-delete" data-name="{{ profile.name }}" data-href="{{ path('profile_delete', {'id': profile.id}) }}">delete</a></td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
@@ -67,8 +73,8 @@
                                 <ul class="pagination pagination-sm m-0 float-right">
                                     {{ knp_pagination_render(pagination) }}
                                 </ul>
-                                <a href="{{ url('event_create') }}"
-                                   class="btn btn-info float-right">Create</a>
+                                <a href="{{ url('profile_create') }}"
+                                   class="btn btn-info">Create</a>
                             </div>
                         </div>
                     </div>

@@ -10,9 +10,27 @@ class RaceResultsSource
 {
     const SOURCE_OBELARUS = 'obelarus';
 
+    const TYPE_GENERAL = 'general';
+    const TYPE_NO_GROUP = 'no_group';
+
     public function __construct()
     {
         $this->codes = [];
+    }
+
+    public static function getTypes()
+    {
+        return [
+            self::SOURCE_OBELARUS,
+        ];
+    }
+
+    public static function getConfigTypes()
+    {
+        return [
+            self::TYPE_GENERAL,
+            self::TYPE_NO_GROUP,
+        ];
     }
 
     /**
@@ -30,6 +48,10 @@ class RaceResultsSource
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Choice({
+     *     RaceResultsSource::TYPE_GENERAL,
+     *     RaceResultsSource::TYPE_NO_GROUP,
+     * })
      */
     private string $tableConfigType;
 
