@@ -4,19 +4,19 @@
     <div class="content-wrapper">
 
         <section class="content-header">
-{#            <div class="container-fluid">#}
-{#                <div class="row mb-2">#}
-{#                    <div class="col-sm-6">#}
-{#                        <h1>Simple Tables</h1>#}
-{#                    </div>#}
-{#                    <div class="col-sm-6">#}
-{#                        <ol class="breadcrumb float-sm-right">#}
-{#                            <li class="breadcrumb-item"><a href="#">Home</a></li>#}
-{#                            <li class="breadcrumb-item active">Simple Tables</li>#}
-{#                        </ol>#}
-{#                    </div>#}
-{#                </div>#}
-{#            </div><!-- /.container-fluid -->#}
+            {# <div class="container-fluid"> #}
+            {# <div class="row mb-2"> #}
+            {# <div class="col-sm-6"> #}
+            {# <h1>Simple Tables</h1> #}
+            {# </div> #}
+            {# <div class="col-sm-6"> #}
+            {# <ol class="breadcrumb float-sm-right"> #}
+            {# <li class="breadcrumb-item"><a href="#">Home</a></li> #}
+            {# <li class="breadcrumb-item active">Simple Tables</li> #}
+            {# </ol> #}
+            {# </div> #}
+            {# </div> #}
+            {# </div><!-- /.container-fluid --> #}
         </section>
 
 
@@ -42,6 +42,7 @@
                                         <th>Races</th>
                                         <th>Import Profiles</th>
                                         <th style="width: 40px">Link</th>
+                                        <th style="width: 40px">Dump config</th>
                                         <th style="width: 40px"></th>
                                         <th style="width: 40px"></th>
                                     </tr>
@@ -52,11 +53,29 @@
                                             <td>{{ event.id }}</td>
                                             <td>{{ event.name }}</td>
                                             <td>{{ event.date|date("d.m.Y") }}</td>
-                                            <td><a href="{{ url('race_list', {'eventId': event.id}) }}">{{ event.races|length }} Races</a></td>
-                                            <td><a href="{{ url('profile_import', {'eventId': event.id}) }}">Import Profiles</a></td>
+                                            <td>
+                                                <a href="{{ url('race_list', {'eventId': event.id}) }}">{{ event.races|length }}
+                                                    Races</a></td>
+                                            <td>{% if event.races is not empty %}
+                                                    {% if event.profilesImportedAt is empty %}
+                                                        <a href="{{ url('profile_import', {'eventId': event.id}) }}">Import
+                                                            Profiles</a>
+                                                    {% else %}
+                                                        {{ event.profilesImportedAt|date("H:i:s d.m.Y")  }} <a href="{{ url('profile_import', {'eventId': event.id}) }}">update</a>
+                                                    {% endif %}
+                                                {% else %}
+                                                    Create Races first
+                                                {% endif %}
+                                            </td>
                                             <td><a href="{{ event.link }}">link</a></td>
+                                            <td>
+                                                <a href="{{ path('event_dump_yaml', {'id': event.id}) }}">{% if event_config_exists(event) %}update{% else %}dump{% endif %}</a>
+                                            </td>
                                             <td><a href="{{ path('event_edit', {'id': event.id}) }}">edit</a></td>
-                                            <td><a href=# data-toggle="modal" data-target="#confirm-delete" data-name="{{ event.name }}" data-href="{{ path('event_delete', {'id': event.id}) }}">delete</a></td>
+                                            <td><a href=# data-toggle="modal" data-target="#confirm-delete"
+                                                   data-name="{{ event.name }}"
+                                                   data-href="{{ path('event_delete', {'id': event.id}) }}">delete</a>
+                                            </td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>

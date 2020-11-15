@@ -32,6 +32,7 @@
                                         <th>Results</th>
                                         <th style="width: 40px"></th>
                                         <th style="width: 40px"></th>
+                                        <th style="width: 40px"></th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -44,7 +45,18 @@
                                             <td>{{ race.slug }}</td>
                                             <td>{{ race.resultsSource.type }}</td>
                                             <td><a href="{{ race.resultsSource.link }}">link</a></td>
-                                            <td><a href="{{ path('race_results', {'id': race.id}) }}">{% if race.profileResults|length > 0 %}{{ race.profileResults|length }}{% else %}not imported{% endif %}</a></td>
+                                            <td>
+                                                {% if race.event.profilesImportedAt is not empty %}
+                                                    {% if race.profileResults|length > 0 %}
+                                                        <a href="{{ path('race_results', {'id': race.id}) }}">{{ race.profileResults|length }}</a>
+                                                    {% else %}
+                                                        <a href="{{ path('race_results_import', {'id': race.id}) }}">do import</a>
+                                                    {% endif %}
+                                                {% else %}
+                                                    Import Profiles first
+                                                {% endif %}
+                                            </td>
+                                            <td><a href="{{ path('race_duplicate', {'eventId': event.id, 'id': race.id}) }}">clone</a></td>
                                             <td><a href="{{ path('race_edit', {'eventId': event.id, 'id': race.id}) }}">edit</a></td>
                                             <td><a href=# data-toggle="modal" data-target="#confirm-delete" data-name="{{ event.name }} Race: {{ race.slug }}" data-href="{{ path('race_delete', {'eventId': event.id, 'id': race.id}) }}">delete</a></td>
                                         </tr>
@@ -57,8 +69,10 @@
                                 <div class="btn-toolbar">
                                     <a href="{{ url('race_create', {'eventId': event.id}) }}"
                                        class="btn btn-info float-right">Create</a>
+                                    <a href="{{ url('event_results_import', {'eventId': event.id}) }}"
+                                       class="mx-1 btn btn-info float-right">Import ALL Race Results</a>
                                     <a href="{{ url('event_list') }}"
-                                       class="mx-1 btn btn-info float-right">To Events list</a>
+                                       class="mx-1 btn btn-outline-info float-right">To Events list</a>
                                 </div>
                             </div>
                           </div>

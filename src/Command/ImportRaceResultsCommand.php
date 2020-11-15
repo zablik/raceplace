@@ -44,7 +44,7 @@ class ImportRaceResultsCommand extends Command
         $io->title(sprintf('Importing race results that participated "%s" event from %s source', $eventSlug, $source));
 
         try {
-            $this->importer->import($eventSlug, $source);
+            $this->importer->import($eventSlug);
         } catch (\Exception $e) {
             $io->error('Command failed with an exception message: ' . $e->getMessage());
             $this->logger->error(sprintf(

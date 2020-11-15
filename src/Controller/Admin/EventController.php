@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Event;
 use App\Form\Admin\EventType;
+use App\Service\Importer\EventDumper;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -98,6 +99,17 @@ class EventController extends AbstractController
     {
         $this->em->remove($event);
         $this->em->flush();
+
+        return $this->redirectToRoute('event_list');
+    }
+
+    /**
+     * @Route("/dump-yaml/{id}", name="event_dump_yaml")
+     * @ParamConverter("event", class="App\Entity\Event")
+     */
+    public function dump(Event $event, EventDumper $eventDumper)
+    {
+        $eventDumper->dump($event);
 
         return $this->redirectToRoute('event_list');
     }

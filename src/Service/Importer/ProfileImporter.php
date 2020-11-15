@@ -2,11 +2,12 @@
 
 namespace App\Service\Importer;
 
+use App\Entity\Event;
 use App\Entity\Profile;
 use App\Repository\ProfileRepository;
 use App\Service\Importer\DataProvider\Profile\ProfileDataProviderHub;
 use App\Service\ResultPageParsers\OBelarus\DTO\Profile as ProfileDto;
-use App\Service\ResultPageParsers\OBelarus\WebResultsTableParser;
+use App\Service\ResultPageParsers\OBelarus\TableConfig;
 use App\Service\Utils\TimeUtils;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -29,6 +30,7 @@ class ProfileImporter
     public function import(string $eventSlug, string $source)
     {
         $profileDtos = $this->providerHub->getProvider($source)->getProfilesData($eventSlug);
+        $event = $this->em->getRepository(Event::class)->findOneBy(['slug' => $eventSlug]);
 
         $this->em->beginTransaction();
 
@@ -40,14 +42,15 @@ class ProfileImporter
                 }
             }
 
+            $event->setProfilesImportedAt(new \DateTime());
+
             $this->em->commit();
+            $this->em->flush();
         } catch (\Exception $e) {
             $this->em->rollback();
 
             return false;
         }
-
-        $this->em->flush();
 
         return true;
     }
@@ -55,8 +58,8 @@ class ProfileImporter
     private static function groupMap()
     {
         return [
-            WebResultsTableParser::GROUP__FEMALE => Profile::GROUP__FEMALE,
-            WebResultsTableParser::GROUP__MALE => Profile::GROUP__MALE,
+            TableConfig::GROUP__FEMALE => Profile::GROUP__FEMALE,
+            TableConfig::GROUP__MALE => Profile::GROUP__MALE,
         ];
     }
 

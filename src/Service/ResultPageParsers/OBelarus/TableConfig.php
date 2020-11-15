@@ -17,6 +17,9 @@ class TableConfig
     const COL_PLACE = 'place';
     const COL_NOTE = 'note';
 
+    const GROUP__MALE = 'Мужчины';
+    const GROUP__FEMALE = 'Женщины';
+
     public static function getConfig(string $type): array
     {
         if (!in_array($type, RaceResultsSource::getConfigTypes())) {
@@ -45,5 +48,19 @@ class TableConfig
             self::COL_PLACE => ['from' => 84, 'length' => 4],
             self::COL_NOTE => ['from' => 100, 'length' => 10],
         ];
+    }
+
+    public static function customTableTitleConverter(string $title)
+    {
+        $config = [
+            'Т5-Ж' => 'Т5-Ж -- ' . self::GROUP__FEMALE,
+            'Т5-М' => 'Т5-М -- ' . self::GROUP__MALE,
+            'Т10-Ж' => 'Т10-Ж -- ' . self::GROUP__FEMALE,
+            'Т10-М' => 'Т10-М -- ' . self::GROUP__MALE,
+            'Т21-Ж' => 'Т21-Ж -- ' . self::GROUP__FEMALE,
+            'Т21-М' => 'Т21-М -- ' . self::GROUP__MALE,
+        ];
+
+        return $config[$title] ?? $title;
     }
 }

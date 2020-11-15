@@ -53,6 +53,11 @@ class Event
      */
     private $slug;
 
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $profilesImportedAt;
+
     public function __construct()
     {
         $this->races = new ArrayCollection();
@@ -140,5 +145,21 @@ class Event
         $this->slug = $slug;
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getProfilesImportedAt(): ?\DateTime
+    {
+        return $this->profilesImportedAt;
+    }
+
+    /**
+     * @param mixed $profilesImportedAt
+     */
+    public function setProfilesImportedAt(?\DateTime $profilesImportedAt): void
+    {
+        $this->profilesImportedAt = $profilesImportedAt;
     }
 }

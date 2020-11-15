@@ -6,11 +6,13 @@ use Symfony\Component\Yaml\Yaml;
 
 class YamlRaceDataProvider implements RaceDataProviderInterface
 {
+    const RACE_DATE_PATH = '/data/races';
+
     private string $sourceDir;
 
     public function __construct(string $kernelRootDir)
     {
-        $this->sourceDir = $kernelRootDir . '/data/races';
+        $this->sourceDir = $kernelRootDir . self::RACE_DATE_PATH;
     }
 
     public function getEventRacesData(string $eventSlug): array

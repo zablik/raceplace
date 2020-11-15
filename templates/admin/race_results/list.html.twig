@@ -66,8 +66,8 @@
                                     {% if race.profileResults|length > 0 %}
                                         <a href=# data-toggle="modal" data-target="#confirm-delete" data-name="ALL results of {{ race.event.name }} Race: {{ race.slug }}" data-href="{{ url('race_results_delete', {'id': race.id}) }}" class="btn btn-danger">Delete ALL results</a>
                                     {% else %}
-{#                                        <a href="{{ url('race_profiles_obtain', {'id': race.id}) }}" class="btn btn-info">Import profiles</a>#}
-                                        <a href="{{ url('race_results_obtain', {'id': race.id}) }}" class="btn btn-info">Import results</a>
+{#                                        <a href="{{ url('race_profiles_import', {'id': race.id}) }}" class="btn btn-info">Import profiles</a>#}
+                                        <a href="{{ url('race_results_import', {'id': race.id}) }}" class="btn btn-info">Import results</a>
                                     {% endif %}
                                     <a href="{{ url('race_list', {'eventId': race.event.id}) }}"
                                        class="mx-1 btn btn-info float-right">To Race list</a>

@@ -70,7 +70,7 @@ class RaceResultsImporter
         $this->em->flush();
     }
 
-    public function import(string $eventSlug, string $source)
+    public function import(string $eventSlug)
     {
         $event = $this->eventRepository->findWithRaces($eventSlug);
 

@@ -15,14 +15,11 @@ class WebResultsTableParser implements WebDataParserInterface
     const RACE_DISTANCE = 'race-distance';
     const RACE_CODE = 'race-code';
 
-    const GROUP__MALE = 'Мужчины';
-    const GROUP__FEMALE = 'Женщины';
-
     private static function getAvailableGroups()
     {
         return [
-            self::GROUP__FEMALE,
-            self::GROUP__MALE,
+            TableConfig::GROUP__FEMALE,
+            TableConfig::GROUP__MALE,
         ];
     }
 
@@ -69,6 +66,7 @@ class WebResultsTableParser implements WebDataParserInterface
 
     protected function parseRaceParams(string $tableTitle): ?array
     {
+        $tableTitle = TableConfig::customTableTitleConverter($tableTitle);
         $regex = sprintf('/^([a-zа-яё\d:\-]+)\s-.*-\s(%s)$/iu', implode('|', self::getAvailableGroups()));
         if (!preg_match($regex, $tableTitle, $match)) {
             return null;

@@ -110,7 +110,7 @@ class ProfileController extends AbstractController
      */
     public function importProfiles(Event $event, ProfileImporter $importer)
     {
-        $source = $event->getRaces()->first()->getRaceResultsSource()->getType();
+        $source = $event->getRaces()->first()->getResultsSource()->getType();
 
         $success = $importer->import($event->getSlug(), $source);
 

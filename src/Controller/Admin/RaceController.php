@@ -85,10 +85,7 @@ class RaceController extends AbstractController
             $this->em->persist($race);
             $this->em->flush();
 
-            return $this->redirectToRoute('race_edit', [
-                'eventId' => $event->getId(),
-                'id' => $race->getId()
-            ]);
+            return $this->redirectToRoute('race_list', ['eventId' => $event->getId()]);
         }
 
         return $this->render('admin/races/edit.html.twig', [
@@ -96,6 +93,21 @@ class RaceController extends AbstractController
             'race' => $race,
             'form' => $form->createView(),
         ]);
+    }
+
+    /**
+     * @Route("/{eventId}/duplicate/{id}", name="race_duplicate")
+     * @ParamConverter("event", class="App\Entity\Event", options={"mapping": {"eventId": "id"}})
+     * @ParamConverter("race", class="App\Entity\Race")
+     */
+    public function duplicate(Event $event, Race $race)
+    {
+        $duplicate = clone $race;
+        $duplicate->setSlug($race->getSlug() . ' clone ' . uniqid());
+        $this->em->persist($duplicate);
+        $this->em->flush();
+
+        return $this->redirectToRoute('race_list', ['eventId' => $event->getId()]);
     }
 
     /**

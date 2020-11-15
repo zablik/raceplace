@@ -268,4 +268,10 @@ class Race
             'Event: ' . !empty($this->getEvent()) ? $this->getEvent()->getName() : '',
         ]);
     }
+
+    public function __clone()
+    {
+        $this->id = null;
+        $this->resultsSource = clone $this->resultsSource;
+    }
 }

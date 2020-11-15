@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Event;
 use App\Entity\ProfileResult;
 use App\Entity\Race;
 use App\Service\Importer\RaceResultsImporter;
@@ -40,14 +41,25 @@ class RaceResultsController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/obtain", name="race_results_obtain")
+     * @Route("/{id}/import", name="race_results_import")
      * @ParamConverter("race", class="App\Entity\Race")
      */
-    public function obtainResults(Race $race): Response
+    public function importResults(Race $race): Response
     {
         $this->importer->importRaceResults($race);
 
         return $this->redirectToRoute('race_results', ['id' => $race->getId()]);
+    }
+
+    /**
+     * @Route("/{eventId}/import-event", name="event_results_import")
+     * @ParamConverter("event", class="App\Entity\Event", options={"mapping": {"eventId": "id"}})
+     */
+    public function importAllResults(Event $event): Response
+    {
+        $this->importer->import($event->getSlug());
+
+        return $this->redirectToRoute('race_list', ['eventId' => $event->getId()]);
     }
 
     /**

@@ -41,6 +41,9 @@ class RaceType extends AbstractType
                 'class' => Event::class,
                 'choices' => [$options['event']],
                 'choice_label' => 'name',
+                'attr' => [
+                    'readonly' => true,
+                ]
             ])
             ->add('slug', TextType::class, [
                 'constraints' => [
