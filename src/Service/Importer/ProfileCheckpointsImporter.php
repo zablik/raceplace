@@ -8,7 +8,6 @@ use App\Entity\ProfileResult;
 use App\Repository\EventRepository;
 use App\Repository\ProfileRepository;
 use App\Service\Importer\DataProvider\ProfileCheckpoints\ProfileCheckpointsDataProviderHub;
-use App\Service\Importer\Exception\DataProviderExcepton;
 use App\Service\ResultPageParsers\OBelarus\DTO\CheckpointsTableRow;
 use App\Service\Utils\CollectionUtils;
 use App\Service\Utils\MotionUtils;

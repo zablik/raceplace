@@ -29,7 +29,9 @@ class EventType extends AbstractType
                     new Url(),
                 ]
             ])
-            ->add('date', DateType::class)
+            ->add('date', DateType::class, [
+                'years' => range(2010, 2021)
+            ])
             ->add('slug', TextType::class, [
                 'constraints' => [
                     new NotBlank(),

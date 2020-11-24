@@ -3,7 +3,7 @@
 namespace App\Service\Importer\DataProvider\RaceResults;
 
 use App\Entity\Race;
-use App\Service\ResultPageParsers\OBelarus\DTO\ResultsTableRow;
+use App\Service\ResultPageParsers\DTO\ResultsTableRow;
 
 interface RaceResultsDataProviderInterface
 {

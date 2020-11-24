@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\ResultPageParsers\OBelarus\DTO;
+namespace App\Service\ResultPageParsers\DTO;
 
 class ResultsTableRow
 {
@@ -11,5 +11,6 @@ class ResultsTableRow
     public ?string $distance;
     public ?string $time;
     public ?string $place;
-    public string $note;
+    public ?string $note = null;
+    public ?string $arfId = null;
 }

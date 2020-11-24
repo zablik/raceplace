@@ -9,9 +9,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 class RaceResultsSource
 {
     const SOURCE_OBELARUS = 'obelarus';
+    const SOURCE_ARF = 'arf';
 
     const TYPE_GENERAL = 'general';
     const TYPE_NO_GROUP = 'no_group';
+    const TYPE_WITH_PENALTY = 'with_penalty';
 
     public function __construct()
     {
@@ -22,6 +24,7 @@ class RaceResultsSource
     {
         return [
             self::SOURCE_OBELARUS,
+            self::SOURCE_ARF,
         ];
     }
 
@@ -30,13 +33,15 @@ class RaceResultsSource
         return [
             self::TYPE_GENERAL,
             self::TYPE_NO_GROUP,
+            self::TYPE_WITH_PENALTY,
         ];
     }
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\Choice({
-     *     RaceResultsSource::SOURCE_OBELARUS
+     *     RaceResultsSource::SOURCE_OBELARUS,
+     *     RaceResultsSource::SOURCE_ARF,
      * })
      */
     private string $type;
@@ -47,13 +52,14 @@ class RaceResultsSource
     private string $link;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Choice({
      *     RaceResultsSource::TYPE_GENERAL,
      *     RaceResultsSource::TYPE_NO_GROUP,
+     *     RaceResultsSource::TYPE_WITH_PENALTY,
      * })
      */
-    private string $tableConfigType;
+    private ?string $tableConfigType;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -114,9 +120,11 @@ class RaceResultsSource
     /**
      * @param string $tableConfigType
      */
-    public function setTableConfigType(?string $tableConfigType): void
+    public function setTableConfigType(?string $tableConfigType): self
     {
         $this->tableConfigType = $tableConfigType;
+
+        return $this;
     }
 
     /**

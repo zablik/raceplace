@@ -86,6 +86,11 @@ class Profile
     private $user;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $arfId;
+
+    /**
      * @var ProfileResult[]|ArrayCollection
      * @ORM\OneToMany(targetEntity=ProfileResult::class, mappedBy="profile", cascade={"remove"})
      */
@@ -182,6 +187,24 @@ class Profile
     {
         $this->user = $user;
 
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getArfId(): ?string
+    {
+        return $this->arfId;
+    }
+
+    /**
+     * @param string|null $arfId
+     * @return Profile
+     */
+    public function setArfId(?string $arfId): self
+    {
+        $this->arfId = $arfId;
         return $this;
     }
 

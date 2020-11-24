@@ -6,20 +6,27 @@ use App\Service\Importer\Exception\DataProviderExcepton;
 
 class RaceResultsDataProviderHub
 {
+    const ARF = 'arf';
     const OBELARUS = 'obelarus';
     const STRAVA = 'strava';
 
     private ObelarusRaceResultsDataProvider $obelarusProvider;
+    private ArfRaceResultsDataProvider $arfProvider;
 
-    public function __construct(ObelarusRaceResultsDataProvider $obelarusProvider)
+    public function __construct(
+        ObelarusRaceResultsDataProvider $obelarusProvider,
+        ArfRaceResultsDataProvider $arfProvider
+    )
     {
         $this->obelarusProvider = $obelarusProvider;
+        $this->arfProvider = $arfProvider;
     }
 
     private function providerMap()
     {
         return [
-            self::OBELARUS => $this->obelarusProvider
+            self::OBELARUS => $this->obelarusProvider,
+            self::ARF => $this->arfProvider,
         ];
     }
 

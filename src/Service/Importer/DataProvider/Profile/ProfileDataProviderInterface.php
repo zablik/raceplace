@@ -2,7 +2,7 @@
 
 namespace App\Service\Importer\DataProvider\Profile;
 
-use App\Service\ResultPageParsers\OBelarus\DTO\Profile;
+use App\Service\ResultPageParsers\DTO\Profile;
 
 interface ProfileDataProviderInterface
 {

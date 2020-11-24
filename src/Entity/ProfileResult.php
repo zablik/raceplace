@@ -35,6 +35,11 @@ class ProfileResult
     private $time;
 
     /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $distance;
+
+    /**
      * @ORM\ManyToOne(targetEntity=Race::class, inversedBy="profileResults")
      */
     private $race;
@@ -87,6 +92,24 @@ class ProfileResult
     public function setTime(?\DateTimeInterface $time): self
     {
         $this->time = $time;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDistance()
+    {
+        return $this->distance;
+    }
+
+    /**
+     * @param mixed $distance
+     */
+    public function setDistance($distance): self
+    {
+        $this->distance = $distance;
 
         return $this;
     }

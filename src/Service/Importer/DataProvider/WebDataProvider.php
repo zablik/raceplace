@@ -3,7 +3,7 @@
 namespace App\Service\Importer\DataProvider;
 
 use App\Entity\RaceResultsSource;
-use App\Service\ResultPageParsers\OBelarus\WebDataParserInterface;
+use App\Service\ResultPageParsers\WebDataParserInterface;
 use App\Service\WebDownloader;
 
 abstract class WebDataProvider
@@ -13,11 +13,13 @@ abstract class WebDataProvider
     protected WebDownloader $webDownloader;
     protected WebDataParserInterface $parser;
 
-    protected function getResults(string $link, string $type)
+    protected function getResults(RaceResultsSource $resultsSource)
     {
+        $link = $resultsSource->getLink();
+
         if (empty($this->results[$link])) {
             $html = $this->webDownloader->getHtml($link);
-            $this->results[$link] = $this->parser->parse($html, $type);
+            $this->results[$link] = $this->parser->parse($html, $resultsSource);
         }
 
         return $this->results[$link];

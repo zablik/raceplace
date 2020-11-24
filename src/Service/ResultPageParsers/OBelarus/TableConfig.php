@@ -3,6 +3,7 @@
 namespace App\Service\ResultPageParsers\OBelarus;
 
 use App\Entity\RaceResultsSource;
+use App\Service\ResultPageParsers\DTO\ResultsTableRow;
 use App\Service\ResultPageParsers\Exception\ParseResultsException;
 
 class TableConfig
@@ -30,6 +31,11 @@ class TableConfig
 
         if ($type === RaceResultsSource::TYPE_NO_GROUP) {
             $generalConfig[self::COL_NOTE] = ['from' => 88, 'length' => 10];
+        }
+        if ($type === RaceResultsSource::TYPE_WITH_PENALTY) {
+            $generalConfig[self::COL_NOTE] = ['from' => 85, 'length' => 4];
+            $generalConfig[self::COL_DISTANCE] = ['from' => 89, 'length' => 11];
+            $generalConfig[self::COL_PLACE] = ['from' => 100, 'length' => 4];
         }
 
         return $generalConfig;
@@ -59,8 +65,56 @@ class TableConfig
             'Т10-М' => 'Т10-М -- ' . self::GROUP__MALE,
             'Т21-Ж' => 'Т21-Ж -- ' . self::GROUP__FEMALE,
             'Т21-М' => 'Т21-М -- ' . self::GROUP__MALE,
+
+            'Ж-5' => 'Ж-5 -- ' . self::GROUP__FEMALE,
+            'М-5' => 'М-5 -- ' . self::GROUP__MALE,
+            'Ж-10' => 'Ж-10 -- ' . self::GROUP__FEMALE,
+            'М-10' => 'М-10 -- ' . self::GROUP__MALE,
+
+            'Т50:М' => 'Т50:М -- ' . self::GROUP__MALE,
+            'Т50:Ж' => 'Т50:Ж -- ' . self::GROUP__FEMALE,
+
+            '21:Ж' => '21:Ж -- ' . self::GROUP__FEMALE,
+            '21:М' => '21:М -- ' . self::GROUP__MALE,
+
+            '10:М' => '10:М -- ' . self::GROUP__MALE,
+            '10:Ж' => '10:Ж -- ' . self::GROUP__FEMALE,
+
+            '5:М' => '5:М -- ' . self::GROUP__MALE,
+            '5:Ж' => '5:Ж -- ' . self::GROUP__FEMALE,
+
+            'М16' => 'М16 -- ' . self::GROUP__MALE,
+            'Ж16' => 'Ж16 -- ' . self::GROUP__FEMALE,
+
+            'М25' => 'М25 -- ' . self::GROUP__MALE,
+            'Ж25' => 'Ж25 -- ' . self::GROUP__FEMALE,
+
+            'М8' => 'М8 -- ' . self::GROUP__MALE,
+            'Ж8' => 'Ж8 -- ' . self::GROUP__FEMALE,
+
+
+
+
         ];
 
         return $config[$title] ?? $title;
+    }
+
+    public static function getHook(string $type): ?callable
+    {
+        $hooks = [
+            RaceResultsSource::TYPE_WITH_PENALTY => function (ResultsTableRow $row) {
+                if (trim($row->note) === '-') {
+                    $row->note = '';
+                }
+                if (!empty($row->note)) {
+                    $row->note = sprintf('Штраф %d часов', (int)$row->note);
+                }
+
+                return $row;
+            }
+        ];
+
+        return $hooks[$type] ?? null;
     }
 }

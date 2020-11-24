@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\ResultPageParsers\OBelarus\DTO;
+namespace App\Service\ResultPageParsers\DTO;
 
 class ResultsTable
 {

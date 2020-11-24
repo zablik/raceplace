@@ -2,9 +2,11 @@
 
 namespace App\Service\ResultPageParsers\OBelarus;
 
+use App\Entity\RaceResultsSource;
 use App\Service\ResultPageParsers\Exception\ParseResultsException;
 use App\Service\ResultPageParsers\OBelarus\DTO\CheckpointsTable;
 use App\Service\ResultPageParsers\OBelarus\DTO\CheckpointsTableRow;
+use App\Service\ResultPageParsers\WebDataParserInterface;
 use App\Service\Utils\NumberUtils;
 use App\Service\Utils\TextUtils;
 use App\Service\Utils\TimeUtils;
@@ -23,7 +25,7 @@ class WebCheckpointsParser implements WebDataParserInterface
     const DISTANCE = 'distance';
     const TIME = 'time';
 
-    public function parse(string $html, string $type): array
+    public function parse(string $html, RaceResultsSource $resultsSource): array
     {
         $checkpoints = [];
         $textTables = (new Crawler($html))

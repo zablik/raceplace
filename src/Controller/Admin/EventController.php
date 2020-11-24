@@ -37,7 +37,7 @@ class EventController extends AbstractController
         $pagination = $paginator->paginate(
             $qb,
             $request->query->getInt('page', 1),
-            30
+            50
         );
 
         return $this->render('admin/events/list.html.twig', [

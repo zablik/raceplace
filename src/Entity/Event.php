@@ -158,8 +158,10 @@ class Event
     /**
      * @param mixed $profilesImportedAt
      */
-    public function setProfilesImportedAt(?\DateTime $profilesImportedAt): void
+    public function setProfilesImportedAt(?\DateTime $profilesImportedAt): self
     {
         $this->profilesImportedAt = $profilesImportedAt;
+
+        return $this;
     }
 }

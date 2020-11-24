@@ -5,8 +5,8 @@ namespace App\Service\Importer\DataProvider\RaceResults;
 use App\Entity\Race;
 use App\Repository\EventRepository;
 use App\Service\Importer\DataProvider\WebDataProvider;
-use App\Service\ResultPageParsers\OBelarus\DTO\ResultsTable;
-use App\Service\ResultPageParsers\OBelarus\DTO\ResultsTableRow;
+use App\Service\ResultPageParsers\DTO\ResultsTable;
+use App\Service\ResultPageParsers\DTO\ResultsTableRow;
 use App\Service\ResultPageParsers\OBelarus\WebResultsTableParser;
 use App\Service\WebDownloader;
 use Doctrine\ORM\NonUniqueResultException;
@@ -32,7 +32,7 @@ class ObelarusRaceResultsDataProvider extends WebDataProvider implements RaceRes
      */
     public function getRaceResultsData(Race $race): array
     {
-        $tables = $this->getResults($race->getResultsSource()->getLink(), $race->getResultsSource()->getTableConfigType());
+        $tables = $this->getResults($race->getResultsSource());
         /** @var ResultsTable[] $raceTables */
         $raceTables = array_filter(
             $tables,

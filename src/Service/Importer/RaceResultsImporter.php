@@ -8,7 +8,7 @@ use App\Repository\EventRepository;
 use App\Repository\ProfileRepository;
 use App\Service\Importer\DataProvider\RaceResults\RaceResultsDataProviderHub;
 use App\Service\Importer\Exception\DataProviderExcepton;
-use App\Service\ResultPageParsers\OBelarus\DTO\ResultsTableRow;
+use App\Service\ResultPageParsers\DTO\ResultsTableRow;
 use App\Service\Utils\CollectionUtils;
 use App\Service\Utils\TimeUtils;
 use Doctrine\ORM\EntityManagerInterface;
@@ -110,6 +110,7 @@ class RaceResultsImporter
             ->setNote($resultsTableRow->note)
             ->setPlace((int)$resultsTableRow->place ?: null)
             ->setNumberPlate($resultsTableRow->numberPlate)
+            ->setDistance(floatval($resultsTableRow->distance))
         ;
 
         $time = $resultsTableRow->time;

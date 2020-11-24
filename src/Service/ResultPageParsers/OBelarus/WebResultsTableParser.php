@@ -2,9 +2,10 @@
 
 namespace App\Service\ResultPageParsers\OBelarus;
 
-use App\Service\ResultPageParsers\Exception\ParseResultsException;
-use App\Service\ResultPageParsers\OBelarus\DTO\ResultsTable;
-use App\Service\ResultPageParsers\OBelarus\DTO\ResultsTableRow;
+use App\Entity\RaceResultsSource;
+use App\Service\ResultPageParsers\DTO\ResultsTable;
+use App\Service\ResultPageParsers\DTO\ResultsTableRow;
+use App\Service\ResultPageParsers\WebDataParserInterface;
 use App\Service\Utils\TextUtils;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -25,10 +26,10 @@ class WebResultsTableParser implements WebDataParserInterface
 
     /**
      * @param string $html
-     * @param string $type
+     * @param RaceResultsSource $resultsSource
      * @return ResultsTable[]
      */
-    public function parse(string $html, string $type): array
+    public function parse(string $html, RaceResultsSource $resultsSource): array
     {
         $nodes = (new Crawler($html))
             ->filterXPath('//div[@id=\'results-body\']')
@@ -55,7 +56,10 @@ class WebResultsTableParser implements WebDataParserInterface
                 $results[$raceCount]->group = $raceParams[self::RACE_GROUP];
                 $raceCount++;
             } elseif ($node->nodeName === 'pre') {
-                $results[$resultsCount++]->results = $this->parseTextTable($node->nodeValue, $type);
+                $results[$resultsCount++]->results = $this->parseTextTable(
+                    $node->nodeValue,
+                    $resultsSource->getTableConfigType()
+                );
             }
         }
 
@@ -67,7 +71,7 @@ class WebResultsTableParser implements WebDataParserInterface
     protected function parseRaceParams(string $tableTitle): ?array
     {
         $tableTitle = TableConfig::customTableTitleConverter($tableTitle);
-        $regex = sprintf('/^([a-zа-яё\d:\-]+)\s-.*-\s(%s)$/iu', implode('|', self::getAvailableGroups()));
+        $regex = sprintf('/^([a-zа-яё\d:\-]+)\s-.*-\s(%s)/iu', implode('|', self::getAvailableGroups()));
         if (!preg_match($regex, $tableTitle, $match)) {
             return null;
             //throw new ParseResultsException(sprintf('Unable to parse race params from title "%s"', $tableTitle));
@@ -75,7 +79,7 @@ class WebResultsTableParser implements WebDataParserInterface
 
         // TODO: #parser Provide [race-code => group] in configuration
         return [
-            self::RACE_CODE => $match[1],
+            self::RACE_CODE => trim($match[1], ':'),
             self::RACE_GROUP => $match[2],
         ];
     }
@@ -87,6 +91,10 @@ class WebResultsTableParser implements WebDataParserInterface
         $result = new ResultsTableRow();
         foreach ($columnsConfig as $colName => $cnf) {
             $result->$colName = trim(mb_substr($row, $cnf['from'], $cnf['length']));
+        }
+
+        if ($hook = TableConfig::getHook($type)) {
+            $result = $hook($result);
         }
 
         return $result;

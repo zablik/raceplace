@@ -35,7 +35,7 @@ class ResultSourceType extends AbstractType
                 'placeholder' => 'Select table config type',
                 'choices' => ArrayUtils::combineSelf(RaceResultsSource::getConfigTypes()),
                 'constraints' => [
-                    new NotBlank(),
+//                    new NotBlank(),
                 ]
             ])
             ->add('checkpointsLink', TextType::class, [

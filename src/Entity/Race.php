@@ -31,6 +31,7 @@ class Race
     const TYPE__MARATHON = 'marathon';
     const TYPE__NIGHT_MARATHON = 'night-marathon';
     const TYPE__XCM = 'xcm';
+    const TYPE__XCO = 'xco';
     const TYPE__NIGHT_XCM = 'night-xcm';
     const TYPE__MULTI = 'multi';
 
@@ -42,6 +43,7 @@ class Race
             self::TYPE__MARATHON,
             self::TYPE__NIGHT_MARATHON,
             self::TYPE__XCM,
+            self::TYPE__XCO,
             self::TYPE__NIGHT_XCM,
             self::TYPE__MULTI,
         ];
@@ -62,6 +64,7 @@ class Race
      *     Race::TYPE__MARATHON,
      *     Race::TYPE__NIGHT_MARATHON,
      *     Race::TYPE__XCM,
+     *     Race::TYPE__XCO,
      *     Race::TYPE__NIGHT_XCM,
      *     Race::TYPE__MULTI,
      * })

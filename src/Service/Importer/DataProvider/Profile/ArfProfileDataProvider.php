@@ -7,11 +7,12 @@ use App\Service\Importer\DataProvider\WebDataProvider;
 use App\Service\Importer\Exception\DataProviderExcepton;
 use App\Service\ResultPageParsers\DTO\Profile;
 use App\Service\ResultPageParsers\DTO\ResultsTable;
-use App\Service\ResultPageParsers\OBelarus\WebResultsTableParser;
+use App\Service\ResultPageParsers\Arf\WebResultsTableParser;
+use App\Service\ResultPageParsers\DTO\ResultsTableRow;
 use App\Service\WebDownloader;
 use Doctrine\ORM\NonUniqueResultException;
 
-class ObelarusProfileDataProvider extends WebDataProvider implements ProfileDataProviderInterface
+class ArfProfileDataProvider extends WebDataProvider implements ProfileDataProviderInterface
 {
     private EventRepository $eventRepository;
 
@@ -42,12 +43,6 @@ class ObelarusProfileDataProvider extends WebDataProvider implements ProfileData
         foreach ($event->getRaces() as $race) {
             $resultTables = $this->getResults($race->getResultsSource());
 
-            // keep only records for the current event
-            $resultTables = array_filter(
-                $resultTables,
-                fn(ResultsTable $table) => in_array($table->code, $race->getResultsSource()->getCodes())
-            );
-
             $tables = array_merge($tables, $resultTables);
         }
 
@@ -58,21 +53,27 @@ class ObelarusProfileDataProvider extends WebDataProvider implements ProfileData
      * @param ResultsTable[] $tables
      * @return Profile[]
      */
-    private function getGetProfilesFromResultTables(array $tables)
+    private function getGetProfilesFromResultTables(array $tables): array
     {
         $profiles = [];
         foreach ($tables as $table) {
             foreach ($table->results as $tableRow) {
-                $profile = new Profile();
-                $profile->name = $tableRow->name;
-                $profile->yearBorn = $tableRow->yearBorn;
-                $profile->regionClub = $tableRow->regionClub;
-                $profile->group = $table->group;
-
-                $profiles[] = $profile;
+                $profiles[] = $this->getGetProfileFromResultTables($tableRow, $table);
             }
         }
 
         return array_unique($profiles, SORT_REGULAR);
+    }
+
+    private function getGetProfileFromResultTables(ResultsTableRow $tableRow, ResultsTable $table): Profile
+    {
+        $profile = new Profile();
+        $profile->name = $tableRow->name;
+        $profile->yearBorn = $tableRow->yearBorn;
+        $profile->regionClub = $tableRow->regionClub;
+        $profile->group = $table->group;
+        $profile->arfId = $tableRow->arfId;
+
+        return $profile;
     }
 }
