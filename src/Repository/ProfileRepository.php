@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Profile;
 use App\Entity\Race;
+use App\Service\Rating\RatingCalculationException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

@@ -66,4 +66,12 @@ class CollectionUtils
             return true;
         });
     }
+
+    /**
+     * @param object[] $objects
+     */
+    public static function entityColumn(array $objects, string $field)
+    {
+        return array_map(fn(object $object) => $object->{'get' . ucfirst($field)}(), $objects);
+    }
 }

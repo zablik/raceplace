@@ -3,8 +3,8 @@
 namespace App\Command;
 
 use App\Entity\Race;
-use App\Service\Importer\RaceResultsImporter;
-use App\Service\Rating\ResultRatioManager;
+use App\Entity\RaceResultCollation;
+use App\Service\Rating\RaceResultCollationManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -13,17 +13,16 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class ImportRaceResultsCommand extends Command
+class CalculateRaceResultCollationsCommand extends Command
 {
-    protected static $defaultName = 'rp:import:race:results:import';
+    protected static $defaultName = 'rp:calculate:result-collations';
 
-    protected ResultRatioManager $ratioManager;
+    protected RaceResultCollationManager $collationManager;
     protected EntityManagerInterface $em;
-    protected RaceResultsImporter $importer;
 
-    public function __construct(EntityManagerInterface $em, RaceResultsImporter $importer)
+    public function __construct(RaceResultCollationManager $collationManager, EntityManagerInterface $em)
     {
-        $this->importer = $importer;
+        $this->collationManager = $collationManager;
         $this->em = $em;
 
         parent::__construct();
@@ -32,7 +31,7 @@ class ImportRaceResultsCommand extends Command
     protected function configure()
     {
         $this
-            ->setDescription('Imports Results for Races')
+            ->setDescription('Calculates result collations for races')
             ->addArgument('raceIds', InputArgument::IS_ARRAY, 'Race IDs', [])
             ->addOption('force', null, InputOption::VALUE_NONE, 'Overwrite existing')
         ;
@@ -40,9 +39,6 @@ class ImportRaceResultsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-//        ini_set('memory_limit', '1500M');
-//        $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
-
         $io = new SymfonyStyle($input, $output);
 
         $raceIds = $input->getArgument('raceIds');
@@ -55,33 +51,43 @@ class ImportRaceResultsCommand extends Command
         $iterableResult = $raceRepository->getIterationFindQuery($raceIds)->iterate();
 
         $i = 1;
+        $n = 0;
 
         while (($res = $iterableResult->next()) !== false) {
             /** @var Race $race */
-            $race= $res[0];
+            $race = $res[0];
 
-            if (0 !== $race->getProfileResults()->count()) {
+            if (!is_null($race->getResultRatioCalculatedAt())) {
                 if ($overwrite) {
-                    $io->note(sprintf('Overwriting results for Race #%d', $race->getId()));
+                    $io->note(sprintf('Overwriting collations for Race #%d', $race->getId()));
                 } else {
-                    $io->warning(sprintf('Results for Race #%d was already imported. Skipping', $race->getId()));
+                    $io->warning(sprintf('Collations for Race #%d was already calculated. Skipping', $race->getId()));
 
                     continue;
                 }
             }
 
-            $this->importer->deleteRaceResults($race);
-            $this->em->flush();
+            $this->collationManager->removeCollationsForRace($race);
+            $ratiosGenerator = $this->collationManager->calculateCollationsForRace($race);
 
-            $this->importer->importRaceResults($race);
+            foreach ($ratiosGenerator as $j => $ratio) {
+                $this->em->persist($ratio);
+                if (($j % 500) === 0) {
+                    $this->em->flush();
+                    $this->em->clear(RaceResultCollation::class);
+                }
+            }
 
+            $race->setResultRatioCalculatedAt(new \DateTime());
             $this->em->flush();
             $this->em->clear();
 
-            $io->note(sprintf('%d (%d): #%d [memory=%d MB]. Imported %d race results', $i++,  $racesCount, $race->getId(), (memory_get_usage(1) / 1024 / 1024), $race->getProfileResults()->count()));
+            $n += $j;
+
+            $io->note(sprintf('Races: %d #%d (%d) | Ratios: %d (%d) => memory=%d MB', $i++, $race->getId(), $racesCount, $j, $n, (memory_get_usage(1) / 1024 / 1024)));
         }
 
-        $io->success('Yeeees');
+        $io->success('Done!');
 
         return Command::SUCCESS;
     }

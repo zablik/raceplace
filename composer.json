@@ -36,7 +36,8 @@
         "symfony/validator": "5.1.*",
         "symfony/web-link": "5.1.*",
         "symfony/webpack-encore-bundle": "^1.7",
-        "symfony/yaml": "5.1.*"
+        "symfony/yaml": "5.1.*",
+      "ext-json": "*"
     },
     "require-dev": {
         "dama/doctrine-test-bundle": "^6.3",

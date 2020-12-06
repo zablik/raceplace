@@ -16,4 +16,29 @@ class ArrayUtils
 
         return array_combine($keys, $array);
     }
+
+    public static function arrayMapWithKeys(callable $getKey, callable $getValue, array $array)
+    {
+        $result = [];
+        foreach ($array as $item) {
+            $result[$getKey($item)] = $getValue($item);
+        }
+
+        if (count($result) !== count($array)) {
+            throw new ArrayUtilsException('array can not be combined, values keys are not unique');
+        }
+
+        return $result;
+    }
+
+    public static function avg(array $values)
+    {
+        if (!$values) {
+            throw new ArrayUtilsException('Array is empty, can\'t calculate average');
+        }
+
+        return array_sum($values) / count($values);
+    }
+
+
 }

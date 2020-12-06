@@ -37,7 +37,7 @@ class TimeUtils
             $min = $min % 60;
         }
 
-        return new DateTime(sprintf('1970-01-01 %d:%d:%d', $hours, $min, $sec));
+        return DateTime::createFromFormat('Y-m-d H:i:s', sprintf('1970-01-01 %02d:%02d:%02d', $hours, $min, $sec));
     }
 
     public static function getNumberOfMinutes(DateTimeInterface $time): ?float

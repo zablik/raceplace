@@ -30,7 +30,7 @@ class ProfileResult
     private $id;
 
     /**
-     * @ORM\Column(type="time", nullable=true)
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $time;
 
@@ -60,7 +60,7 @@ class ProfileResult
     private $place;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="boolean", length=255, nullable=true)
      */
     private $disqualification = false;
 
@@ -86,12 +86,12 @@ class ProfileResult
 
     public function getTime(): ?\DateTimeInterface
     {
-        return $this->time;
+        return $this->time ? \DateTime::createFromFormat('U', $this->time) : null;
     }
 
     public function setTime(?\DateTimeInterface $time): self
     {
-        $this->time = $time;
+        $this->time = $time ? $time->getTimestamp() : null;
 
         return $this;
     }
@@ -181,12 +181,12 @@ class ProfileResult
         return $this;
     }
 
-    public function getDisqualification(): ?string
+    public function getDisqualification(): bool
     {
         return $this->disqualification;
     }
 
-    public function setDisqualification(?string $disqualification): self
+    public function setDisqualification(bool $disqualification): self
     {
         $this->disqualification = $disqualification;
 

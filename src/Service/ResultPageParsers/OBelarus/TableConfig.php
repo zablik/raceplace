@@ -34,7 +34,7 @@ class TableConfig
         }
         if ($type === RaceResultsSource::TYPE_WITH_PENALTY) {
             $generalConfig[self::COL_NOTE] = ['from' => 85, 'length' => 4];
-            $generalConfig[self::COL_DISTANCE] = ['from' => 89, 'length' => 11];
+            $generalConfig[self::COL_TIME] = ['from' => 89, 'length' => 11];
             $generalConfig[self::COL_PLACE] = ['from' => 100, 'length' => 4];
         }
 
@@ -49,8 +49,8 @@ class TableConfig
             self::COL_REGION => ['from' => 31, 'length' => 21],
             self::COL_BORN => ['from' => 52, 'length' => 4],
             self::COL_NUMBER_PLATE => ['from' => 58, 'length' => 6],
-            self::COL_DISTANCE => ['from' => 64, 'length' => 11],
-            self::COL_TIME => ['from' => 75, 'length' => 9],
+            self::COL_DISTANCE => ['from' => 64, 'length' => 10],
+            self::COL_TIME => ['from' => 73, 'length' => 10],
             self::COL_PLACE => ['from' => 84, 'length' => 4],
             self::COL_NOTE => ['from' => 100, 'length' => 10],
         ];

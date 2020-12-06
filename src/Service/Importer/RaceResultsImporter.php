@@ -10,6 +10,7 @@ use App\Service\Importer\DataProvider\RaceResults\RaceResultsDataProviderHub;
 use App\Service\Importer\Exception\DataProviderExcepton;
 use App\Service\ResultPageParsers\DTO\ResultsTableRow;
 use App\Service\Utils\CollectionUtils;
+use App\Service\Utils\NumberUtils;
 use App\Service\Utils\TimeUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -21,19 +22,22 @@ class RaceResultsImporter
     protected SerializerInterface $serializer;
     protected EventRepository $eventRepository;
     protected ProfileRepository $profileRepository;
+    protected ProfileImporter $profileImporter;
 
     public function __construct(
         RaceResultsDataProviderHub $providerHub,
         EntityManagerInterface $em,
         SerializerInterface $serializer,
         EventRepository $eventRepository,
-        ProfileRepository $profileRepository
+        ProfileRepository $profileRepository,
+        ProfileImporter $profileImporter
     ) {
         $this->providerHub = $providerHub;
         $this->em = $em;
         $this->serializer = $serializer;
         $this->eventRepository = $eventRepository;
         $this->profileRepository = $profileRepository;
+        $this->profileImporter = $profileImporter;
     }
 
     public function importRaceResults(Race $race)
@@ -45,9 +49,18 @@ class RaceResultsImporter
             $profile = $this->findProfile($result);
 
             if (!$profile) {
-                throw new DataProviderExcepton(
-                    sprintf('No profile for "%s" in DB! Import profiles first', $result->name)
+                $this->profileImporter->import(
+                    $race->getEvent()->getSlug(),
+                    $race->getResultsSource()->getType()
                 );
+
+                $profile = $this->findProfile($result);
+
+                if (!$profile) {
+                    throw new DataProviderExcepton(
+                        sprintf('No profile for "%s" in DB!', $result->name)
+                    );
+                }
             }
 
             $profileResult = $this->convertToProfileResult($result);
@@ -109,8 +122,8 @@ class RaceResultsImporter
         $profileResult = (new ProfileResult())
             ->setNote($resultsTableRow->note)
             ->setPlace((int)$resultsTableRow->place ?: null)
-            ->setNumberPlate($resultsTableRow->numberPlate)
-            ->setDistance(floatval($resultsTableRow->distance))
+            ->setNumberPlate(trim($resultsTableRow->numberPlate))
+            ->setDistance(NumberUtils::strToFloat($resultsTableRow->distance))
         ;
 
         $time = $resultsTableRow->time;
@@ -126,5 +139,10 @@ class RaceResultsImporter
         $profileResult->setTime(TimeUtils::strTimeToDatetime($time));
 
         return $profileResult;
+    }
+
+    public function deleteRaceResults(Race $race)
+    {
+        $race->getProfileResults()->map(fn(ProfileResult $result) => $this->em->remove($result));
     }
 }

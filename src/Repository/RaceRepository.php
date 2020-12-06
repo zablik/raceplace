@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\Event;
 use App\Entity\Race;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -19,6 +21,41 @@ class RaceRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Race::class);
     }
+
+    #region Command processing
+
+    private function getIterationQueryBuilder(array $raceIds = null): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('r');
+
+        if ($raceIds) {
+            $qb->where('r.id in (:ids)')
+                ->setParameters([':ids' => $raceIds]);
+        }
+
+        return $qb;
+    }
+
+    public function getIterationFindQuery(array $raceIds = null): Query
+    {
+        return $this->getIterationQueryBuilder($raceIds)->getQuery();
+    }
+
+    /**
+     * @param int[]|null $raceIds
+     * @return int
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function getIterationCount(array $raceIds = null): int
+    {
+        return $this->getIterationQueryBuilder($raceIds)
+            ->select('COUNT(r.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    #endregion Command processing
 
     public function findWithResults(Event $event, string $type, float $distance, string $group = null)
     {
@@ -52,6 +89,26 @@ class RaceRepository extends ServiceEntityRepository
             ->setParameters([
                 'event' => $event,
                 'type' => $type,
+            ]);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findByFilter(string $type, float $minDistance, float $maxDistance, \DateTime $from, \DateTime $till)
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->leftJoin('r.event', 'e')
+            ->andWhere('e.date > :from')
+            ->andWhere('e.date < :till')
+            ->andWhere('r.type = :type')
+            ->andWhere('r.distance > :minDistance')
+            ->andWhere('r.distance < :maxDistance')
+            ->setParameters([
+                'from' => $from,
+                'till' => $till,
+                'type' => $type,
+                'minDistance' => $minDistance,
+                'maxDistance' => $maxDistance,
             ]);
 
         return $qb->getQuery()->getResult();

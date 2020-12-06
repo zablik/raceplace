@@ -108,6 +108,11 @@ class Race
      */
     private $slug;
 
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $resultRatioCalculatedAt;
+
     public function __construct()
     {
         $this->checkpoints = new ArrayCollection();
@@ -156,12 +161,12 @@ class Race
         return $this;
     }
 
-    public function getEvent(): ?Event
+    public function getEvent(): Event
     {
         return $this->event;
     }
 
-    public function setEvent(?Event $event): self
+    public function setEvent(Event $event): self
     {
         $this->event = $event;
 
@@ -276,5 +281,17 @@ class Race
     {
         $this->id = null;
         $this->resultsSource = clone $this->resultsSource;
+    }
+
+    public function getResultRatioCalculatedAt(): ?\DateTimeInterface
+    {
+        return $this->resultRatioCalculatedAt;
+    }
+
+    public function setResultRatioCalculatedAt(?\DateTimeInterface $resultRatioCalculatedAt): self
+    {
+        $this->resultRatioCalculatedAt = $resultRatioCalculatedAt;
+
+        return $this;
     }
 }
