@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello IndexController!{% endblock %}
+
+{% block body %}
+
+    <table>
+    {% for group, number in stat %}
+        <tr>
+            <td>{{ group }}</td>
+            <td>{% for i in 0..number %}={% endfor %}></td>
+        </tr>
+    {% endfor %}
+    </table>
+
+    <table border="1px">
+    {% set position = 1 %}
+    {% for id, val in rating %}
+        <tr>
+            <td>{{ position }}{% set position = position + 1 %}</td>
+            <td>{{ val }}</td>
+            <td>{{ profiles[id].name }}, {{ profiles[id].birthday|date('Y') }}</td>
+            <td>
+                {% for result in profiles[id].results %}
+                    {{ result.race.name ? result.race.name : result.race.event.name }} {{ result.race.event.date|date('Y-m-d') }} ({{ result.distance }} km): {{ result.place }}<br>
+                {% endfor %}
+            </td>
+        </tr>
+    {% endfor %}
+    </table>
+
+{% endblock %}

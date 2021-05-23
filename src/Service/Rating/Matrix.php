@@ -117,6 +117,13 @@ class Matrix
 
         arsort($rating);
 
+        $worstScore = $rating[array_key_last($rating)];
+
+        array_walk($rating, fn(&$score) => $score = round($score / $worstScore, 2));
+//        array_walk($rating, function (&$score, $key) {
+//
+//        });
+
         return $rating;
     }
 
